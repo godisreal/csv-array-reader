@@ -22,17 +22,23 @@ else:
 
 root = Tk() 
 
-columns = ("agent", "iniPos", "iniVel")
+left_frame = Frame(root, width=200, height=600, bg="grey")
+left_frame.pack_propagate(0)
+        
+right_frame = Frame(root, width=400, height=600, bg="lightgrey")
+right_frame.pack_propagate(0)
+
+columns = ("agent", "iniPosX", "iniPosY")
 
 treeview = Treeview(root, height=18, show="headings", columns=columns)  #Table
 
 treeview.column("agent", width=100, anchor='center')
-treeview.column("iniPos", width=300, anchor='center')
-treeview.column("iniVel", width=300, anchor='center')
+treeview.column("iniPosX", width=300, anchor='center')
+treeview.column("iniPosY", width=300, anchor='center')
 
 treeview.heading("agent", text="agent") # Show table headings
-treeview.heading("iniPos", text="iniPos")
-treeview.heading("iniPos", text="iniVel")
+treeview.heading("iniPosX", text="iniPosX")
+treeview.heading("iniPosY", text="iniPosY")
 
 treeview.pack(side=LEFT, fill=BOTH)
 
