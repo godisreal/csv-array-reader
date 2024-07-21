@@ -1,5 +1,6 @@
 
 import os, sys
+#from data_func import *
 
 #from tkinter import ttk
 #from tkinter import *
@@ -19,28 +20,87 @@ else:
     from ttk import Treeview
     from ttk import Entry
     import tkFileDialog as tkf
+    
+def file_open(event=None):
+    pass
 
+def file_save(event=None):
+    pass
+    
 root = Tk() 
 
-left_frame = Frame(root, width=200, height=600, bg="grey")
-left_frame.pack_propagate(0)
+menubar = Menu(root, bg="lightgrey", fg="black")
+
+'''
+root.config(menu=menubar)
+
+file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
+file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
+menubar.add_cascade(label="File", menu=file_menu)
+
+add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+add_menu.add_command(label="Add Item", command=newrow, accelerator="Ctrl+O")
+menubar.add_cascade(label="Add", menu=add_menu)
+
+delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctrl+O")
+menubar.add_cascade(label="Delete", menu=delete_menu)
+'''
+
+
+notebook = Notebook(root)      
+notebook.pack(side=TOP, padx=2, pady=2)
         
-right_frame = Frame(root, width=400, height=600, bg="lightgrey")
-right_frame.pack_propagate(0)
+frameAgent = Frame(root)
+frameWall = Frame(root)
+frameDoor = Frame(root)
+frameExit = Frame(root)
 
-columns = ("agent", "iniPosX", "iniPosY")
+notebook.add(frameAgent,text="Agent")
+notebook.add(frameWall,text="Wall")
+notebook.add(frameDoor,text="Exit")
+notebook.add(frameExit,text="Door")
 
-treeview = Treeview(root, height=18, show="headings", columns=columns)  #Table
+#left_frame = Frame(root, width=200, height=600, bg="grey")
+#left_frame.pack_propagate(0)
+        
+#right_frame = Frame(root, width=400, height=600, bg="lightgrey")
+#right_frame.pack_propagate(0)
+
+columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre")
+
+scrollbarAy = Scrollbar(frameAgent, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarAy.pack(side=RIGHT, fill=Y)
+
+scrollbarAx = Scrollbar(frameAgent, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarAx.pack(side=BOTTOM, fill=X)
+
+treeview = Treeview(frameAgent, height=18, show="headings", columns=columns)  #Table
+scrollbarAy.config(command=treeview.yview)
+scrollbarAx.config(command=treeview.xview)
 
 treeview.column("agent", width=100, anchor='center')
-treeview.column("iniPosX", width=300, anchor='center')
-treeview.column("iniPosY", width=300, anchor='center')
+treeview.column("iniPosX", width=100, anchor='center')
+treeview.column("iniPosY", width=100, anchor='center')
+treeview.column("iniVx", width=100, anchor='center')
+treeview.column("iniVy", width=100, anchor='center')
+treeview.column("timelag", width=100, anchor='center')
+treeview.column("tpre", width=100, anchor='center')
 
 treeview.heading("agent", text="agent") # Show table headings
 treeview.heading("iniPosX", text="iniPosX")
 treeview.heading("iniPosY", text="iniPosY")
+treeview.heading("iniVx", text='iniVx')
+treeview.heading("iniVy", text='iniVy')
+treeview.heading("timelag", text='timelag')
+treeview.heading("tpre", text='tpre')
 
 treeview.pack(side=LEFT, fill=BOTH)
+
+#scrollbar = Scrollbar(treeview, orient="vertical", command=treeview.yview)
+#scrollbar.pack(side=RIGHT, fill=Y)
+#scrollbar.config(command=treeview.yview)
 
 name = ['agent1','agent2','new_agent']
 pos = ['10.13.71.223','10.25.61.186','10.25.11.163']
@@ -77,7 +137,7 @@ def set_cell_value(event): # double click to edit the item
 
     rn = int(str(row).replace('I',''))
 
-    entryedit = Text(root,width=10+(cn-1)*16,height = 1)
+    entryedit = Text(frameAgent,width=10+(cn-1)*16,height = 1)
 
     entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
 
@@ -89,7 +149,7 @@ def set_cell_value(event): # double click to edit the item
 
         okb.destroy()
 
-    okb = Button(root, text='OK', width=4, command=saveedit)
+    okb = Button(frameAgent, text='OK', width=4, command=saveedit)
 
     okb.place(x=90+(cn-1)*242,y=2+rn*20)
 
@@ -100,22 +160,34 @@ def newrow():
     vel.append('Trial')
 
     treeview.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
-
     treeview.update()
 
-    newb.place(x=120, y=(len(name)-1)*20+45)
-
+    newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
     newb.update()
 
 treeview.bind('<Double-1>', set_cell_value) # Double click to edit items
 
-newb = Button(root, text='New Agent', width=20, command=newrow)
-
-newb.place(x=120,y=(len(name)-1)*20+45)
+newb = Button(frameAgent, text='New Agent', width=20, command=newrow)
+newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
 
 for col in columns:  # bind function: enable sorting in table headings
 
     treeview.heading(col, text=col, command=lambda _col=col: treeview_sort_column(treeview, _col, False))
+
+root.config(menu=menubar)
+
+file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
+file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
+menubar.add_cascade(label="File", menu=file_menu)
+
+add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+add_menu.add_command(label="Add Item", command=newrow, accelerator="Ctrl+A")
+menubar.add_cascade(label="Add", menu=add_menu)
+
+delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctrl+D")
+menubar.add_cascade(label="Delete", menu=delete_menu)
 
 '''
 
