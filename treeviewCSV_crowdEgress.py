@@ -1,6 +1,7 @@
 
 import os, sys
-#from data_func import *
+from data_func import *
+import numpy as np
 
 #from tkinter import ttk
 #from tkinter import *
@@ -20,9 +21,26 @@ else:
     from ttk import Treeview
     from ttk import Entry
     import tkFileDialog as tkf
-    
+
+
 def file_open(event=None):
-    pass
+    fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
+        #temp=self.fname_EVAC.split('/') 
+    temp=os.path.basename(fnameCSV)
+    currentdir = os.path.dirname(fnameCSV)
+    #lb_csv.config(text = "The input csv file selected: "+str(fnameCSV)+"\n")
+    #self.textInformation.insert(END, 'fname_EVAC:   '+self.fname_EVAC)
+    print('fname', fnameCSV)
+    #setStatusStr("Simulation not yet started!")
+    #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
+    
+    agents, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
+    
+    
+    #for i in range(np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+    #    treeviewA.heading(columns[i], text=agents[0][i])
+    for i in range(1, len(agents)): #
+        treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8]))
 
 def file_save(event=None):
     pass
@@ -95,17 +113,17 @@ treeviewA.column("inComp", width=70, anchor='center')
 treeviewA.column("tpreMode", width=70, anchor='center')
 
 
-treeviewA.heading("agent", text="agent") # Show table headings
-treeviewA.heading("iniPosX", text="iniPosX")
-treeviewA.heading("iniPosY", text="iniPosY")
-treeviewA.heading("iniVx", text='iniVx')
-treeviewA.heading("iniVy", text='iniVy')
-treeviewA.heading("timelag", text='timelag')
-treeviewA.heading("tpre", text='tpre')
-treeviewA.heading("p", text='p')
-treeviewA.heading("pMode", text='pMode')
-treeviewA.heading("p2", text='p2')
-treeviewA.heading("talkRange", text='talkRange')
+#treeviewA.heading("agent", text="agent") # Show table headings
+#treeviewA.heading("iniPosX", text="iniPosX")
+#treeviewA.heading("iniPosY", text="iniPosY")
+#treeviewA.heading("iniVx", text='iniVx')
+#treeviewA.heading("iniVy", text='iniVy')
+#treeviewA.heading("timelag", text='timelag')
+#treeviewA.heading("tpre", text='tpre')
+#treeviewA.heading("p", text='p')
+#treeviewA.heading("pMode", text='pMode')
+#treeviewA.heading("p2", text='p2')
+#treeviewA.heading("talkRange", text='talkRange')
 #treeviewA.heading("aType", text='aType')
 #treeviewA.heading("inComp", text='inComp')
 #treeviewA.heading("tpreMode", text='tpreMode')
@@ -120,9 +138,6 @@ name = ['agent1','agent2','new_agent']
 pos = ['10.13.71.223','10.25.61.186','10.25.11.163']
 vel = ['10.13.71.223','10.25.61.186','10.25.11.163']
 
-for i in range(len(name)): #
-
-    treeviewA.insert('', i, values=(name[i], pos[i], vel[i]))
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
@@ -189,6 +204,7 @@ for col in columns:  # bind function: enable sorting in table headings
 
     treeviewA.heading(col, text=col, command=lambda _col=col: treeview_sort_column(treeviewA, _col, False))
 
+# Configure the menubar
 root.config(menu=menubar)
 
 file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
