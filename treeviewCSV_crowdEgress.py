@@ -37,10 +37,16 @@ def file_open(event=None):
     agents, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
     
-    #for i in range(np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-    #    treeviewA.heading(columns[i], text=agents[0][i])
+    for i in range(np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewA.heading(columns[i], text=agents[0][i])
     for i in range(1, len(agents)): #
         treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8]))
+        
+    for i in range(1, len(walls)): #
+        treeviewW.insert('', i, values=(walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
+        
+    for i in range(1, len(exits)): #
+        treeviewE.insert('', i, values=(exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
 
 def file_save(event=None):
     pass
@@ -85,7 +91,8 @@ notebook.add(frameExit,text="Door")
 #right_frame = Frame(root, width=400, height=600, bg="lightgrey")
 #right_frame.pack_propagate(0)
 
-columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
+#columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
+columns = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
 
 scrollbarAy = Scrollbar(frameAgent, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarAy.pack(side=RIGHT, fill=Y)
@@ -97,6 +104,26 @@ treeviewA = Treeview(frameAgent, height=18, show="headings", columns=columns)  #
 scrollbarAy.config(command=treeviewA.yview)
 scrollbarAx.config(command=treeviewA.xview)
 
+treeviewA.column("A", width=100, anchor='center')
+treeviewA.column("B", width=70, anchor='center')
+treeviewA.column("C", width=70, anchor='center')
+treeviewA.column("D", width=70, anchor='center')
+treeviewA.column("E", width=70, anchor='center')
+treeviewA.column("F", width=70, anchor='center')
+treeviewA.column("G", width=70, anchor='center')
+treeviewA.column("H", width=70, anchor='center')
+treeviewA.column("I", width=70, anchor='center')
+treeviewA.column("J", width=70, anchor='center')
+treeviewA.column("K", width=70, anchor='center')
+treeviewA.column("L", width=70, anchor='center')
+treeviewA.column("M", width=70, anchor='center')
+treeviewA.column("N", width=70, anchor='center')
+treeviewA.column("O", width=70, anchor='center')
+treeviewA.column("P", width=70, anchor='center')
+treeviewA.column("Q", width=70, anchor='center')
+
+
+'''
 treeviewA.column("agent", width=100, anchor='center')
 treeviewA.column("iniPosX", width=70, anchor='center')
 treeviewA.column("iniPosY", width=70, anchor='center')
@@ -127,6 +154,7 @@ treeviewA.column("tpreMode", width=70, anchor='center')
 #treeviewA.heading("aType", text='aType')
 #treeviewA.heading("inComp", text='inComp')
 #treeviewA.heading("tpreMode", text='tpreMode')
+'''
 
 treeviewA.pack(side=LEFT, fill=BOTH)
 
@@ -134,10 +162,35 @@ treeviewA.pack(side=LEFT, fill=BOTH)
 #scrollbar.pack(side=RIGHT, fill=Y)
 #scrollbar.config(command=treeviewA.yview)
 
-name = ['agent1','agent2','new_agent']
-pos = ['10.13.71.223','10.25.61.186','10.25.11.163']
-vel = ['10.13.71.223','10.25.61.186','10.25.11.163']
+scrollbarWy = Scrollbar(frameWall, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarWy.pack(side=RIGHT, fill=Y)
 
+scrollbarWx = Scrollbar(frameWall, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarWx.pack(side=BOTTOM, fill=X)
+
+treeviewW = Treeview(frameWall, height=18, show="headings", columns=columns)  #Table
+scrollbarWy.config(command=treeviewW.yview)
+scrollbarWx.config(command=treeviewW.xview)
+
+treeviewW.column("A", width=100, anchor='center')
+treeviewW.column("B", width=70, anchor='center')
+treeviewW.column("C", width=70, anchor='center')
+treeviewW.column("D", width=70, anchor='center')
+treeviewW.column("E", width=70, anchor='center')
+treeviewW.column("F", width=70, anchor='center')
+treeviewW.column("G", width=70, anchor='center')
+treeviewW.column("H", width=70, anchor='center')
+treeviewW.column("I", width=70, anchor='center')
+treeviewW.column("J", width=70, anchor='center')
+treeviewW.column("K", width=70, anchor='center')
+treeviewW.column("L", width=70, anchor='center')
+treeviewW.column("M", width=70, anchor='center')
+treeviewW.column("N", width=70, anchor='center')
+treeviewW.column("O", width=70, anchor='center')
+treeviewW.column("P", width=70, anchor='center')
+treeviewW.column("Q", width=70, anchor='center')
+
+treeviewW.pack(side=LEFT, fill=BOTH)
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
@@ -145,10 +198,10 @@ def treeview_sort_column(tv, col, reverse):  # Treeview
     l.sort(reverse=reverse)  # sort method
     # rearrange items in sorted positions
 
-    for index, (val, k) in enumerate(l):  # 根据排序后索引移动
+    for index, (val, k) in enumerate(l):
         tv.move(k, '', index)
 
-    tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 重写标题，使之成为再点倒序的标题
+    tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 
 
 def set_cell_value(event): # double click to edit the item
 
@@ -184,11 +237,9 @@ def set_cell_value(event): # double click to edit the item
     
 
 def newrow():
-
     name.append('NoName')
     pos.append('IP')
     vel.append('Trial')
-
     treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
     treeviewA.update()
 
@@ -199,11 +250,10 @@ treeviewA.bind('<Double-1>', set_cell_value) # Double click to edit items
 
 #newb = Button(frameAgent, text='New Agent', width=20, command=newrow)
 #newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
-
 for col in columns:  # bind function: enable sorting in table headings
-
     treeviewA.heading(col, text=col, command=lambda _col=col: treeview_sort_column(treeviewA, _col, False))
 
+#######################
 # Configure the menubar
 root.config(menu=menubar)
 
@@ -219,63 +269,5 @@ menubar.add_cascade(label="Add", menu=add_menu)
 delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
 delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctrl+D")
 menubar.add_cascade(label="Delete", menu=delete_menu)
-
-'''
-
-1.遍历表格
-
-t = treeviewA.get_children()
-
-for i in t:
-
-    print(treeview.item(i,'values'))
-
-2.绑定单击离开事件
-
-def treeviewClick(event):  # 单击
-
-    for item in tree.selection():
-
-        item_text = tree.item(item, "values")
-
-        print(item_text[0:2])  # 输出所选行的第一列的值
-
-tree.bind('<ButtonRelease-1>', treeviewClick) 
-
-------------------------------
-
-鼠标左键单击按下1/Button-1/ButtonPress-1 
-
-鼠标左键单击松开ButtonRelease-1 
-
-鼠标右键单击3 
-
-鼠标左键双击Double-1/Double-Button-1 
-
-鼠标右键双击Double-3 
-
-鼠标滚轮单击2 
-
-鼠标滚轮双击Double-2 
-
-鼠标移动B1-Motion 
-
-鼠标移动到区域Enter 
-
-鼠标离开区域Leave 
-
-获得键盘焦点FocusIn 
-
-失去键盘焦点FocusOut 
-
-键盘事件Key 
-
-回车键Return 
-
-控件尺寸变Configure
-
-------------------------------
-
-'''
 
 root.mainloop()
