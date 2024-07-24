@@ -37,14 +37,18 @@ def file_open(event=None):
     agents, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
     
-    for i in range(np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+    for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i], text=agents[0][i])
     for i in range(1, len(agents)): #
-        treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8]))
-        
+        treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+
+    for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewW.heading(columns[i], text=walls[0][i])
     for i in range(1, len(walls)): #
         treeviewW.insert('', i, values=(walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
-        
+
+    for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewE.heading(columns[i], text=exits[0][i])
     for i in range(1, len(exits)): #
         treeviewE.insert('', i, values=(exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
 
@@ -77,13 +81,13 @@ notebook.pack(side=TOP, padx=2, pady=2)
         
 frameAgent = Frame(root)
 frameWall = Frame(root)
-frameDoor = Frame(root)
 frameExit = Frame(root)
+frameDoor = Frame(root)
 
 notebook.add(frameAgent,text="Agent")
 notebook.add(frameWall,text="Wall")
-notebook.add(frameDoor,text="Exit")
-notebook.add(frameExit,text="Door")
+notebook.add(frameExit,text="Exit")
+notebook.add(frameDoor,text="Door")
 
 #left_frame = Frame(root, width=200, height=600, bg="grey")
 #left_frame.pack_propagate(0)
@@ -122,7 +126,6 @@ treeviewA.column("O", width=70, anchor='center')
 treeviewA.column("P", width=70, anchor='center')
 treeviewA.column("Q", width=70, anchor='center')
 
-
 '''
 treeviewA.column("agent", width=100, anchor='center')
 treeviewA.column("iniPosX", width=70, anchor='center')
@@ -139,7 +142,6 @@ treeviewA.column("aType", width=70, anchor='center')
 treeviewA.column("inComp", width=70, anchor='center')
 treeviewA.column("tpreMode", width=70, anchor='center')
 
-
 #treeviewA.heading("agent", text="agent") # Show table headings
 #treeviewA.heading("iniPosX", text="iniPosX")
 #treeviewA.heading("iniPosY", text="iniPosY")
@@ -155,7 +157,6 @@ treeviewA.column("tpreMode", width=70, anchor='center')
 #treeviewA.heading("inComp", text='inComp')
 #treeviewA.heading("tpreMode", text='tpreMode')
 '''
-
 treeviewA.pack(side=LEFT, fill=BOTH)
 
 #scrollbar = Scrollbar(treeviewA, orient="vertical", command=treeviewA.yview)
@@ -189,8 +190,37 @@ treeviewW.column("N", width=70, anchor='center')
 treeviewW.column("O", width=70, anchor='center')
 treeviewW.column("P", width=70, anchor='center')
 treeviewW.column("Q", width=70, anchor='center')
-
 treeviewW.pack(side=LEFT, fill=BOTH)
+
+### Frame of Exit
+scrollbarEy = Scrollbar(frameExit, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarEy.pack(side=RIGHT, fill=Y)
+
+scrollbarEx = Scrollbar(frameExit, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarEx.pack(side=BOTTOM, fill=X)
+
+treeviewE = Treeview(frameExit, height=18, show="headings", columns=columns)  #Table
+scrollbarEy.config(command=treeviewE.yview)
+scrollbarEx.config(command=treeviewE.xview)
+
+treeviewE.column("A", width=100, anchor='center')
+treeviewE.column("B", width=70, anchor='center')
+treeviewE.column("C", width=70, anchor='center')
+treeviewE.column("D", width=70, anchor='center')
+treeviewE.column("E", width=70, anchor='center')
+treeviewE.column("F", width=70, anchor='center')
+treeviewE.column("G", width=70, anchor='center')
+treeviewE.column("H", width=70, anchor='center')
+treeviewE.column("I", width=70, anchor='center')
+treeviewE.column("J", width=70, anchor='center')
+treeviewE.column("K", width=70, anchor='center')
+treeviewE.column("L", width=70, anchor='center')
+treeviewE.column("M", width=70, anchor='center')
+treeviewE.column("N", width=70, anchor='center')
+treeviewE.column("O", width=70, anchor='center')
+treeviewE.column("P", width=70, anchor='center')
+treeviewE.column("Q", width=70, anchor='center')
+treeviewE.pack(side=LEFT, fill=BOTH)
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
