@@ -22,8 +22,17 @@ else:
     from ttk import Entry
     import tkFileDialog as tkf
 
+##################################################
+# This is the global data array from csv data file
+# Initialize by None
+global dataCSV
+
+
+   
 
 def file_open(event=None):
+    
+    global dataCSV
     fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
         #temp=self.fname_EVAC.split('/') 
     temp=os.path.basename(fnameCSV)
@@ -34,8 +43,9 @@ def file_open(event=None):
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
-    dataCSV = readCSV_base(fnameCSV)
-    print(dataCSV)
+    iniArray = readCSV_base(fnameCSV)
+    print(iniArray)
+    dataCSV = iniArray
     
     for i in range(np.shape(dataCSV)[0]): #
         treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
@@ -70,6 +80,7 @@ menubar.add_cascade(label="Delete", menu=delete_menu)
 
 #columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
 columns = ("/", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
+COL = list(columns)
 
 scrollbarAy = Scrollbar(root, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarAy.pack(side=RIGHT, fill=Y)
@@ -151,28 +162,45 @@ def set_cell_value(event): # double click to edit the item
 
         #item = I001
         item_text = treeviewA.item(item, "values")
+        print(item_text)
+        print(item)
         #print(item_text[0:2])  # Output the column number selected by users
 
     column= treeviewA.identify_column(event.x)# column
     row = treeviewA.identify_row(event.y)  # row
 
     cn = int(str(column).replace('#',''))
-    rn = int(str(row).replace('I',''))
+    rn = int(str(row).replace('I',''), base=16)
+    
+    print("cn:", column)
+    print("rn:", row)
 
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
     entryedit = Text(root, width=20, height = 2)
     #entryedit = Entry(root,width=10)
-    entryedit.insert(END, str(rn)+':'+str(cn)+str(item_text[cn-1:cn]))
+    entryedit.insert(END, str(rn)+columns[cn-1]+'= '+str(item_text[cn-1]))
     #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
     entryedit.pack()
+    #lb= Label(root, text = str(rn)+columns[cn-1])
+    #lb.pack()
 
     def saveedit():
-
-        treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end'))
+        
+        global dataCSV
+        temp=entryedit.get(0.0, 'end').split('=')
+        try:
+            treeviewA.set(item, column=column, value=temp[1].strip())
+            dataCSV[rn-1, cn-2]=temp[1].strip()
+            print(dataCSV) #[rn, cn])
+        except:
+            treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end').strip())
+            dataCSV[rn-1, cn-2]=entryedit.get(0.0, 'end').strip()
+            print(dataCSV) #[rn, cn])
+        #lb.destroy()
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text='OK', width=4, command=saveedit)
+    okb = Button(root, text= str(rn)+columns[cn-1]+':OK', width=9, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*130,y=2+rn*20)
     
 
