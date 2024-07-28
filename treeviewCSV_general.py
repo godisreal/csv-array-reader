@@ -1,7 +1,15 @@
 
 import os, sys
-from data_func import *
 import numpy as np
+import csv
+
+#from math import *
+#from config import *
+#import re
+#import random
+#from ctypes import *
+#import struct
+#import time
 
 #from tkinter import ttk
 #from tkinter import *
@@ -14,6 +22,7 @@ if sys.version_info[0] == 3: # Python 3
     from tkinter.ttk import Treeview
     from tkinter.ttk import Button
     import tkinter.filedialog as tkf
+    import tkinter.messagebox as msg
 else:
     # Python 2
     from Tkinter import *
@@ -21,20 +30,88 @@ else:
     from ttk import Treeview
     from ttk import Entry
     import tkFileDialog as tkf
+    import tkMessageBox as msg
+    
 
 ##################################################
 # This is the global data array from csv data file
 # Initialize by None
-global dataCSV
+dataCSV = None
+openCSV = False
+openFileName = None
 
+def readCSV_base(fileName):
+    
+    # read .csv file
+    csvFile = open(fileName, "r")
+    reader = csv.reader(csvFile)
+    print(reader)
+    strData = []
+    for item in reader:
+        #print(item)
+        strData.append(item)
 
-   
+    #print(strData)
+    #print('np.shape(strData)=', np.shape(strData))
+    #print('\n')
+
+    print('\n')
+    print('#=======================#')
+    print(fileName)
+    dataNP = np.array(strData)
+    #print (dataNP)
+    #print ('np.shape(dataNP)', np.shape(dataNP))
+    #print ('\n')
+
+    #print(strData[1:,1:])
+    csvFile.close()
+    return dataNP
+    
+
+# Not used after the flow solver is integrated into our program
+# This function was originally developed to dump exit2door data in TestGeom
+def saveCSV(dataNP, outputFile, inputFile=None):
+    
+    (I, J) = np.shape(dataNP)
+    #(I, J) = np.shape(exit2doors)
+    #print "The size of exit2door:", [I, J]
+    #dataNP = np.zeros((I+1, J+1))
+
+    #dataNP[1:, 1:] = exit2doors
+    #np.savetxt(fileName, dataNP, delimiter=',', fmt='%s')   #'2darray.csv'
+    try:
+        with open(outputFile, mode='wb+', newline='') as exit2door_file:
+            csv_writer = csv.writer(exit2door_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputFile is not None:
+                csv_writer.writerow([inputFile])
+            for i in range(I):
+                #print(dataNP[i])
+                csv_writer.writerow(dataNP[i])
+    
+    except:
+        with open(outputFile, mode='wb+') as exit2door_file:
+            csv_writer = csv.writer(exit2door_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputFile is not None:
+                csv_writer.writerow([inputFile])
+            #csv_writer.writerow(['&Wall', '0/startX', '1/startY', '2/endX', '3/endY', '4/arrow', '5/shape', '6/inComp'])
+            #index_temp=0
+            for i in range(I):
+                csv_writer.writerow(dataNP[i])
+            #for wall in walls:
+            #    csv_writer.writerow(['--', str(wall.params[0]), str(wall.params[1]), str(wall.params[2]), str(wall.params[3]), str(wall.arrow), str(wall.mode), str(wall.inComp)])
+            #    index_temp=index_temp+1
+    
 
 def file_open(event=None):
     
     global dataCSV
+    global openCSV
+    global openFileName
+    
+    dataCSV = None
     fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
         #temp=self.fname_EVAC.split('/') 
+    openFileName = fnameCSV
     temp=os.path.basename(fnameCSV)
     currentdir = os.path.dirname(fnameCSV)
     #lb_csv.config(text = "The input csv file selected: "+str(fnameCSV)+"\n")
@@ -46,14 +123,38 @@ def file_open(event=None):
     iniArray = readCSV_base(fnameCSV)
     print(iniArray)
     dataCSV = iniArray
-    
+
     for i in range(np.shape(dataCSV)[0]): #
-        treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+        try:
+            treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+        except:
+            treeviewA.insert('', i, values=(i+1))
+        
+    openCSV=True
+
+
 
 def file_save(event=None):
-    pass
+
+    global dataCSV
+    global openCSV
+    global openFileName
+
+    if openCSV is False:
+        msg.showerror("No File Open", "Please open an ini file first")
+        return
+
+    #with open(self.active_ini_filename, "w") as ini_file:
+    #    self.active_ini.write(ini_file)
+    saveCSV(dataCSV, openFileName)
+    msg.showinfo("Saved", "File Saved Successfully")
+
     
 root = Tk() 
+
+file_name_var = StringVar()
+file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 12))
+file_name_label.pack(side=TOP, expand=1, fill=X)
 
 '''
 root.config(menu=menubar)
@@ -187,14 +288,14 @@ def set_cell_value(event): # double click to edit the item
     def saveedit():
         
         global dataCSV
-        temp=entryedit.get(0.0, 'end').split('=')
         try:
+            temp=entryedit.get(0.0, 'end').split('=')
             treeviewA.set(item, column=column, value=temp[1].strip())
-            dataCSV[rn-1, cn-2]=temp[1].strip()
+            dataCSV[rn-1][cn-2]=temp[1].strip()
             print(dataCSV) #[rn, cn])
         except:
             treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end').strip())
-            dataCSV[rn-1, cn-2]=entryedit.get(0.0, 'end').strip()
+            dataCSV[rn-1][cn-2]=entryedit.get(0.0, 'end').strip()
             print(dataCSV) #[rn, cn])
         #lb.destroy()
         entryedit.destroy()
