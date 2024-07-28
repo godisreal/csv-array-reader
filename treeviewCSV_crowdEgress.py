@@ -242,16 +242,22 @@ def set_cell_value(event): # double click to edit the item
         #print(item_text[0:2])  # Output the column number selected by users
 
     column= treeviewA.identify_column(event.x)# column
-
     row = treeviewA.identify_row(event.y)  # row
 
     cn = int(str(column).replace('#',''))
+    rn = int(str(row).replace('I',''), base=16)
+    
+    print("cn:", column)
+    print("rn:", row)
 
-    rn = int(str(row).replace('I',''))
-
-    entryedit = Text(frameAgent,width=10+(cn-1)*16,height = 1)
-
-    entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
+    #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
+    entryedit = Text(root, width=20, height = 2)
+    #entryedit = Entry(root,width=10)
+    entryedit.insert(END, str(rn)+columns[cn-1]+'= '+str(item_text[cn-1]))
+    #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
+    entryedit.pack()
+    #lb= Label(root, text = str(rn)+columns[cn-1])
+    #lb.pack()
 
     def saveedit():
 
@@ -261,9 +267,9 @@ def set_cell_value(event): # double click to edit the item
 
         okb.destroy()
 
-    okb = Button(frameAgent, text='OK', width=4, command=saveedit)
+    okb = Button(root, text='OK', width=4, command=saveedit)
 
-    okb.place(x=90+(cn-1)*242,y=2+rn*20)
+    okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
     
 
 def newrow():
