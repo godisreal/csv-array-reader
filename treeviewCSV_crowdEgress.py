@@ -24,9 +24,13 @@ else:
 
 
 agents=None
+agent2exit=None
+groupC=None
 walls=None
 exits=None
 doors=None
+
+openFileName = None
 
 def file_open(event=None):
     
@@ -98,14 +102,19 @@ notebook = Notebook(root)
 notebook.pack(side=TOP, padx=2, pady=2)
 
 frameAgent = Frame(root)
+frameAgent2Exit = Frame(root)
+frameAgentGroup = Frame(root)
 frameWall = Frame(root)
 frameExit = Frame(root)
 frameDoor = Frame(root)
 
-notebook.add(frameAgent,text="Agent")
-notebook.add(frameWall,text="Wall")
-notebook.add(frameExit,text="Exit")
-notebook.add(frameDoor,text="Door")
+
+notebook.add(frameAgent,text="  <AgentFeatures>  ")
+notebook.add(frameAgent2Exit,text="  <AgentExitProb>  ")
+notebook.add(frameAgentGroup,text="  <AgentGroup>  ")
+notebook.add(frameWall,text="  <Wall/Obstruction>  ")
+notebook.add(frameExit,text="  <Exit/SinkPoint>  ")
+notebook.add(frameDoor,text="  <Door/Passage/WayPoint>  ")
 
 #left_frame = Frame(root, width=200, height=600, bg="grey")
 #left_frame.pack_propagate(0)
@@ -146,42 +155,76 @@ treeviewA.column("O", width=70, anchor='center')
 treeviewA.column("P", width=70, anchor='center')
 treeviewA.column("Q", width=70, anchor='center')
 
-'''
-treeviewA.column("agent", width=100, anchor='center')
-treeviewA.column("iniPosX", width=70, anchor='center')
-treeviewA.column("iniPosY", width=70, anchor='center')
-treeviewA.column("iniVx", width=70, anchor='center')
-treeviewA.column("iniVy", width=70, anchor='center')
-treeviewA.column("timelag", width=70, anchor='center')
-treeviewA.column("tpre", width=70, anchor='center')
-treeviewA.column("p", width=70, anchor='center')
-treeviewA.column("pMode", width=70, anchor='center')
-treeviewA.column("p2", width=70, anchor='center')
-treeviewA.column("talkRange", width=70, anchor='center')
-treeviewA.column("aType", width=70, anchor='center')
-treeviewA.column("inComp", width=70, anchor='center')
-treeviewA.column("tpreMode", width=70, anchor='center')
 
-#treeviewA.heading("agent", text="agent") # Show table headings
-#treeviewA.heading("iniPosX", text="iniPosX")
-#treeviewA.heading("iniPosY", text="iniPosY")
-#treeviewA.heading("iniVx", text='iniVx')
-#treeviewA.heading("iniVy", text='iniVy')
-#treeviewA.heading("timelag", text='timelag')
-#treeviewA.heading("tpre", text='tpre')
-#treeviewA.heading("p", text='p')
-#treeviewA.heading("pMode", text='pMode')
-#treeviewA.heading("p2", text='p2')
-#treeviewA.heading("talkRange", text='talkRange')
-#treeviewA.heading("aType", text='aType')
-#treeviewA.heading("inComp", text='inComp')
-#treeviewA.heading("tpreMode", text='tpreMode')
-'''
 treeviewA.pack(side=LEFT, fill=BOTH)
 
 #scrollbar = Scrollbar(treeviewA, orient="vertical", command=treeviewA.yview)
 #scrollbar.pack(side=RIGHT, fill=Y)
 #scrollbar.config(command=treeviewA.yview)
+
+scrollbarA2Ey = Scrollbar(frameAgent2Exit, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarA2Ey.pack(side=RIGHT, fill=Y)
+
+scrollbarA2Ex = Scrollbar(frameAgent2Exit, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarA2Ex.pack(side=BOTTOM, fill=X)
+
+treeviewA2E = Treeview(frameAgent2Exit, height=18, show="headings", columns=columns)  #Table
+scrollbarA2Ey.config(command=treeviewA2E.yview)
+scrollbarA2Ex.config(command=treeviewA2E.xview)
+
+treeviewA2E.column("/", width=30, anchor='center')
+treeviewA2E.column("A", width=70, anchor='center')
+treeviewA2E.column("B", width=70, anchor='center')
+treeviewA2E.column("C", width=70, anchor='center')
+treeviewA2E.column("D", width=70, anchor='center')
+treeviewA2E.column("E", width=70, anchor='center')
+treeviewA2E.column("F", width=70, anchor='center')
+treeviewA2E.column("G", width=70, anchor='center')
+treeviewA2E.column("H", width=70, anchor='center')
+treeviewA2E.column("I", width=70, anchor='center')
+treeviewA2E.column("J", width=70, anchor='center')
+treeviewA2E.column("K", width=70, anchor='center')
+treeviewA2E.column("L", width=70, anchor='center')
+treeviewA2E.column("M", width=70, anchor='center')
+treeviewA2E.column("N", width=70, anchor='center')
+treeviewA2E.column("O", width=70, anchor='center')
+treeviewA2E.column("P", width=70, anchor='center')
+treeviewA2E.column("Q", width=70, anchor='center')
+
+treeviewA2E.pack(side=LEFT, fill=BOTH)
+
+
+scrollbarAGy = Scrollbar(frameAgentGroup, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarAGy.pack(side=RIGHT, fill=Y)
+
+scrollbarAGx = Scrollbar(frameAgentGroup, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarAGx.pack(side=BOTTOM, fill=X)
+
+treeviewAG = Treeview(frameAgentGroup, height=18, show="headings", columns=columns)  #Table
+scrollbarAGy.config(command=treeviewAG.yview)
+scrollbarAGx.config(command=treeviewAG.xview)
+
+treeviewAG.column("/", width=30, anchor='center')
+treeviewAG.column("A", width=70, anchor='center')
+treeviewAG.column("B", width=70, anchor='center')
+treeviewAG.column("C", width=70, anchor='center')
+treeviewAG.column("D", width=70, anchor='center')
+treeviewAG.column("E", width=70, anchor='center')
+treeviewAG.column("F", width=70, anchor='center')
+treeviewAG.column("G", width=70, anchor='center')
+treeviewAG.column("H", width=70, anchor='center')
+treeviewAG.column("I", width=70, anchor='center')
+treeviewAG.column("J", width=70, anchor='center')
+treeviewAG.column("K", width=70, anchor='center')
+treeviewAG.column("L", width=70, anchor='center')
+treeviewAG.column("M", width=70, anchor='center')
+treeviewAG.column("N", width=70, anchor='center')
+treeviewAG.column("O", width=70, anchor='center')
+treeviewAG.column("P", width=70, anchor='center')
+treeviewAG.column("Q", width=70, anchor='center')
+
+treeviewAG.pack(side=LEFT, fill=BOTH)
+
 
 scrollbarWy = Scrollbar(frameWall, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarWy.pack(side=RIGHT, fill=Y)
