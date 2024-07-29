@@ -25,7 +25,7 @@ else:
 
 agents=None
 agent2exit=None
-groupC=None
+agentgroup=None
 walls=None
 exits=None
 doors=None
@@ -34,7 +34,7 @@ openFileName = None
 
 def file_open(event=None):
     
-    global agents, walls, exits, doors
+    global agents, agent2exit, agentgroup, walls, exits, doors
     
     fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
         #temp=self.fname_EVAC.split('/') 
@@ -46,13 +46,29 @@ def file_open(event=None):
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
-    agents, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
+    agents, agent2exit, agentgroup, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i+1], text=agents[0][i])
     for i in range(1, len(agents)): #
         try:
-            treeviewA.insert('', i, values=(i, agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+            treeviewA.insert('', i, values=(i-1, agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+        except:
+            treeviewA.insert('', i, values=(i))
+
+    for i in range(len(exits)): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewA2E.heading(columns[i+1], text=agent2exit[0][i])
+    for i in range(1, len(agent2exit)): #
+        try:
+            treeviewA2E.insert('', i, values=(i-1, agent2exit[i][0], agent2exit[i][1], agent2exit[i][2], agent2exit[i][3], agent2exit[i][4], agent2exit[i][5],  agent2exit[i][6], agent2exit[i][7], agent2exit[i][8], agent2exit[i][9], agent2exit[i][10]))
+        except:
+            treeviewA.insert('', i, values=(i))
+
+    for i in range(len(agents)): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewAG.heading(columns[i+1], text=agentgroup[0][i])
+    for i in range(1, len(agentgroup)): #
+        try:
+            treeviewAG.insert('', i, values=(i-1, agentgroup[i][0], agentgroup[i][1], agentgroup[i][2], agentgroup[i][3], agentgroup[i][4], agentgroup[i][5],  agentgroup[i][6], agentgroup[i][7], agentgroup[i][8], agentgroup[i][9], agentgroup[i][10]))
         except:
             treeviewA.insert('', i, values=(i))
 
@@ -60,7 +76,7 @@ def file_open(event=None):
         treeviewW.heading(columns[i+1], text=walls[0][i])
     for i in range(1, len(walls)): #
         try:
-            treeviewW.insert('', i, values=(i, walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
+            treeviewW.insert('', i, values=(i-1, walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
         except:
             treeviewW.insert('', i, values=(i))
             
@@ -68,7 +84,7 @@ def file_open(event=None):
         treeviewE.heading(columns[i+1], text=exits[0][i])
     for i in range(1, len(exits)): #
         try: 
-            treeviewE.insert('', i, values=(i, exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
+            treeviewE.insert('', i, values=(i-1, exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
         except:
             treeviewE.insert('', i, values=(i))
 
@@ -110,11 +126,11 @@ frameDoor = Frame(root)
 
 
 notebook.add(frameAgent,text="  <AgentFeatures>  ")
-notebook.add(frameAgent2Exit,text="  <AgentExitProb>  ")
-notebook.add(frameAgentGroup,text="  <AgentGroup>  ")
 notebook.add(frameWall,text="  <Wall/Obstruction>  ")
 notebook.add(frameExit,text="  <Exit/SinkPoint>  ")
+notebook.add(frameAgent2Exit,text="  <AgentExitProb>  ")
 notebook.add(frameDoor,text="  <Door/Passage/WayPoint>  ")
+notebook.add(frameAgentGroup,text="  <AgentGroup>  ")
 
 #left_frame = Frame(root, width=200, height=600, bg="grey")
 #left_frame.pack_propagate(0)
