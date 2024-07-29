@@ -341,7 +341,7 @@ def readArrayIndex(tableFeatures, NRow, NColomn, index=0, iniX=1, iniY=1, debug=
 
 
 
-def readCrowdEgressCSV(FileName, debug=True, marginTitle=1, ini=1):
+def readCrowdEgressCSV(FileName, debug=True, marginTitle=1):
 
     #dataFeatures = readCSV_base(FileName)
     #[Num_Data, Num_Features] = np.shape(dataFeatures)   
@@ -358,6 +358,24 @@ def readCrowdEgressCSV(FileName, debug=True, marginTitle=1, ini=1):
     if debug: 
         print ('Number of Agents:', Num_Agents, '\n')
         print ("Features of Agents\n", agentFeatures, "\n")
+
+    agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&agent2exit')
+    Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if Num_Agent2Exit <= 0:
+        agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&ped2exit')
+        Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if Num_Agent2Exit <= 0:
+        agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&Ped2Exit')
+        Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+
+    agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupC')
+    Num_AgentGroup=len(agentgroupFeatures)-marginTitle
+    if Num_AgentGroup <= 0:
+        agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupCABD')
+        Num_AgentGroup=len(agent2exitFeatures)-marginTitle
+    if Num_AgentGroup <= 0:
+        agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupABD')
+        Num_AgentGroup=len(agent2exitFeatures)-marginTitle
 
     obstFeatures, lowerIndex, upperIndex = getData(FileName, '&Wall')
     Num_Obsts=len(obstFeatures)-marginTitle
@@ -389,7 +407,7 @@ def readCrowdEgressCSV(FileName, debug=True, marginTitle=1, ini=1):
         print ('Number of Doors:', Num_Doors, '\n')
         print ('Features of Doors\n', doorFeatures, "\n")
     
-    return agentFeatures, obstFeatures, exitFeatures, doorFeatures
+    return agentFeatures, agent2exitFeatures, agentgroupFeatures, obstFeatures, exitFeatures, doorFeatures
 
 
 
