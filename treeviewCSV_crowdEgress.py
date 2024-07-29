@@ -23,7 +23,15 @@ else:
     import tkFileDialog as tkf
 
 
+agents=None
+walls=None
+exits=None
+doors=None
+
 def file_open(event=None):
+    
+    global agents, walls, exits, doors
+    
     fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
         #temp=self.fname_EVAC.split('/') 
     temp=os.path.basename(fnameCSV)
@@ -36,28 +44,38 @@ def file_open(event=None):
     
     agents, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
-    
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewA.heading(columns[i], text=agents[0][i])
+        treeviewA.heading(columns[i+1], text=agents[0][i])
     for i in range(1, len(agents)): #
-        treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+        try:
+            treeviewA.insert('', i, values=(i, agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+        except:
+            treeviewA.insert('', i, values=(i))
 
     for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewW.heading(columns[i], text=walls[0][i])
+        treeviewW.heading(columns[i+1], text=walls[0][i])
     for i in range(1, len(walls)): #
-        treeviewW.insert('', i, values=(walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
-
+        try:
+            treeviewW.insert('', i, values=(i, walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
+        except:
+            treeviewW.insert('', i, values=(i))
+            
     for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewE.heading(columns[i], text=exits[0][i])
+        treeviewE.heading(columns[i+1], text=exits[0][i])
     for i in range(1, len(exits)): #
-        treeviewE.insert('', i, values=(exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
+        try: 
+            treeviewE.insert('', i, values=(i, exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
+        except:
+            treeviewE.insert('', i, values=(i))
 
 def file_save(event=None):
     pass
     
 root = Tk() 
 
-menubar = Menu(root, bg="lightgrey", fg="black")
+file_name_var = StringVar()
+file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 12))
+file_name_label.pack(side=TOP, expand=1, fill=X)
 
 '''
 root.config(menu=menubar)
@@ -78,7 +96,7 @@ menubar.add_cascade(label="Delete", menu=delete_menu)
 
 notebook = Notebook(root)      
 notebook.pack(side=TOP, padx=2, pady=2)
-        
+
 frameAgent = Frame(root)
 frameWall = Frame(root)
 frameExit = Frame(root)
@@ -96,7 +114,8 @@ notebook.add(frameDoor,text="Door")
 #right_frame.pack_propagate(0)
 
 #columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
-columns = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
+
+columns = ("/", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
 
 scrollbarAy = Scrollbar(frameAgent, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarAy.pack(side=RIGHT, fill=Y)
@@ -108,7 +127,8 @@ treeviewA = Treeview(frameAgent, height=18, show="headings", columns=columns)  #
 scrollbarAy.config(command=treeviewA.yview)
 scrollbarAx.config(command=treeviewA.xview)
 
-treeviewA.column("A", width=100, anchor='center')
+treeviewA.column("/", width=30, anchor='center')
+treeviewA.column("A", width=70, anchor='center')
 treeviewA.column("B", width=70, anchor='center')
 treeviewA.column("C", width=70, anchor='center')
 treeviewA.column("D", width=70, anchor='center')
@@ -173,6 +193,7 @@ treeviewW = Treeview(frameWall, height=18, show="headings", columns=columns)  #T
 scrollbarWy.config(command=treeviewW.yview)
 scrollbarWx.config(command=treeviewW.xview)
 
+treeviewW.column("/", width=30, anchor='center')
 treeviewW.column("A", width=100, anchor='center')
 treeviewW.column("B", width=70, anchor='center')
 treeviewW.column("C", width=70, anchor='center')
@@ -203,6 +224,7 @@ treeviewE = Treeview(frameExit, height=18, show="headings", columns=columns)  #T
 scrollbarEy.config(command=treeviewE.yview)
 scrollbarEx.config(command=treeviewE.xview)
 
+treeviewE.column("/", width=30, anchor='center')
 treeviewE.column("A", width=100, anchor='center')
 treeviewE.column("B", width=70, anchor='center')
 treeviewE.column("C", width=70, anchor='center')
@@ -233,7 +255,7 @@ def treeview_sort_column(tv, col, reverse):  # Treeview
 
     tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 
 
-def set_cell_value(event): # double click to edit the item
+def set_cell_value_A(event): # double click to edit the item
 
     for item in treeviewA.selection():
 
@@ -251,9 +273,9 @@ def set_cell_value(event): # double click to edit the item
     print("rn:", row)
 
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
-    entryedit = Text(root, width=20, height = 2)
+    entryedit = Text(root, width=26, height = 2)
     #entryedit = Entry(root,width=10)
-    entryedit.insert(END, str(rn)+columns[cn-1]+'= '+str(item_text[cn-1]))
+    entryedit.insert(END, 'agent'+str(rn)+'|'+agents[0][cn-2]+' = '+str(item_text[cn-1]))
     #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
     entryedit.pack()
     #lb= Label(root, text = str(rn)+columns[cn-1])
@@ -262,12 +284,10 @@ def set_cell_value(event): # double click to edit the item
     def saveedit():
 
         treeviewA.set(item, column=column, value=entryedit.get(0.0, "end"))
-
         entryedit.destroy()
-
         okb.destroy()
 
-    okb = Button(root, text='OK', width=4, command=saveedit)
+    okb = Button(root, text='agent'+str(rn)+'|'+agents[0][cn-2]+': <OK>', width=26, command=saveedit)
 
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
     
@@ -282,7 +302,9 @@ def newrow():
     #newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
     #newb.update()
 
-treeviewA.bind('<Double-1>', set_cell_value) # Double click to edit items
+treeviewA.bind('<Double-1>', set_cell_value_A) # Double click to edit items
+root.bind("<Control-o>", file_open)
+root.bind("<Control-s>", file_save)
 
 #newb = Button(frameAgent, text='New Agent', width=20, command=newrow)
 #newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
@@ -291,6 +313,8 @@ for col in columns:  # bind function: enable sorting in table headings
 
 #######################
 # Configure the menubar
+
+menubar = Menu(root, bg="lightgrey", fg="black")
 root.config(menu=menubar)
 
 file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
