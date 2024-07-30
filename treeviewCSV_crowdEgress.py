@@ -315,7 +315,8 @@ def treeview_sort_column(tv, col, reverse):  # Treeview
     tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 
 
 def set_cell_value_A(event): # double click to edit the item
-
+    
+    global agents
     for item in treeviewA.selection():
 
         #item = I001
@@ -334,7 +335,7 @@ def set_cell_value_A(event): # double click to edit the item
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
     entryedit = Text(root, width=26, height = 2)
     #entryedit = Entry(root,width=10)
-    entryedit.insert(END, 'agent'+str(rn)+'|'+agents[0][cn-2]+' = '+str(item_text[cn-1]))
+    entryedit.insert(END, agents[rn][0]+'|'+agents[0][cn-2]+' = '+str(item_text[cn-1]))
     #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
     entryedit.pack()
     #lb= Label(root, text = str(rn)+columns[cn-1])
@@ -342,12 +343,23 @@ def set_cell_value_A(event): # double click to edit the item
 
     def saveedit():
 
-        treeviewA.set(item, column=column, value=entryedit.get(0.0, "end"))
+        global agents
+        try:
+            temp=entryedit.get(0.0, 'end').split('=')
+            treeviewA.set(item, column=column, value=temp[1].strip())
+            agents[rn][cn-2]=temp[1].strip()
+            print(agents) #[rn, cn])
+        except:
+            treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end').strip())
+            agents[rn][cn-2]=entryedit.get(0.0, 'end').strip()
+            print(agents) #[rn, cn])
+            
+        #treeviewA.set(item, column=column, value=entryedit.get(0.0, "end"))
+        #agents[rn-1][cn-2]=entryedit.get(0.0, "end"))
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text='agent'+str(rn)+'|'+agents[0][cn-2]+': <OK>', width=26, command=saveedit)
-
+    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <OK>', width=26, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
     
 
