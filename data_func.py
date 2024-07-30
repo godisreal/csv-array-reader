@@ -367,6 +367,9 @@ def readCrowdEgressCSV(FileName, debug=True, marginTitle=1):
     if Num_Agent2Exit <= 0:
         agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&Ped2Exit')
         Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if debug:
+        print ('Number of Agent2Exit:', Num_Agent2Exit, '\n')
+        print ('Features of Agent2Exit\n', agent2exitFeatures, "\n")
 
     agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupC')
     Num_AgentGroup=len(agentgroupFeatures)-marginTitle
@@ -376,6 +379,9 @@ def readCrowdEgressCSV(FileName, debug=True, marginTitle=1):
     if Num_AgentGroup <= 0:
         agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupABD')
         Num_AgentGroup=len(agent2exitFeatures)-marginTitle
+    if debug:
+        print ('Number of AgentGroup:', Num_AgentGroup, '\n')
+        print ('Features of AgentGroup\n', agentgroupFeatures, "\n")
 
     obstFeatures, lowerIndex, upperIndex = getData(FileName, '&Wall')
     Num_Obsts=len(obstFeatures)-marginTitle
@@ -406,8 +412,19 @@ def readCrowdEgressCSV(FileName, debug=True, marginTitle=1):
     if debug:
         print ('Number of Doors:', Num_Doors, '\n')
         print ('Features of Doors\n', doorFeatures, "\n")
-    
-    return agentFeatures, agent2exitFeatures, agentgroupFeatures, obstFeatures, exitFeatures, doorFeatures
+        
+    exit2doorFeatures, lowerIndex, upperIndex = getData(FileName, '&Exit2Door')
+    Num_Exit2Door=len(exit2doorFeatures)-marginTitle
+    if Num_Exit2Door <= 0:
+        exit2doorFeatures, lowerIndex, upperIndex = getData(FileName, '&exit2door')
+        Num_Exit2Door=len(doorFeatures)-marginTitle
+
+    if debug:
+        print ('Number of Exit2Door:', Num_Exit2Door, '\n')
+        print ('Features of Exit2Door\n', exit2doorFeatures, "\n")
+
+
+    return agentFeatures, agent2exitFeatures, agentgroupFeatures, obstFeatures, exitFeatures, doorFeatures, exit2doorFeatures
 
 
 
