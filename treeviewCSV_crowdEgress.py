@@ -29,6 +29,7 @@ agentgroup=None
 walls=None
 exits=None
 doors=None
+exit2door=None
 
 openFileName = None
 
@@ -46,47 +47,63 @@ def file_open(event=None):
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
-    agents, agent2exit, agentgroup, walls, exits, doors = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
+    agents, agent2exit, agentgroup, walls, exits, doors, exit2door = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewA.heading(columns[i+1], text=agents[0][i])
+        treeviewA.heading(columns[i], text=agents[0][i])
     for i in range(1, len(agents)): #
         try:
-            treeviewA.insert('', i, values=(i-1, agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
+            treeviewA.insert('', i, values=(agents[i][0], agents[i][1], agents[i][2], agents[i][3], agents[i][4], agents[i][5],  agents[i][6], agents[i][7], agents[i][8], agents[i][9], agents[i][10]))
         except:
             treeviewA.insert('', i, values=(i))
 
     for i in range(len(exits)): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewA2E.heading(columns[i+1], text=agent2exit[0][i])
+        treeviewA2E.heading(columns[i], text=agent2exit[0][i])
     for i in range(1, len(agent2exit)): #
         try:
-            treeviewA2E.insert('', i, values=(i-1, agent2exit[i][0], agent2exit[i][1], agent2exit[i][2], agent2exit[i][3], agent2exit[i][4], agent2exit[i][5],  agent2exit[i][6], agent2exit[i][7], agent2exit[i][8], agent2exit[i][9], agent2exit[i][10]))
+            treeviewA2E.insert('', i, values=(agent2exit[i][0], agent2exit[i][1], agent2exit[i][2], agent2exit[i][3], agent2exit[i][4], agent2exit[i][5],  agent2exit[i][6], agent2exit[i][7], agent2exit[i][8], agent2exit[i][9], agent2exit[i][10]))
         except:
             treeviewA.insert('', i, values=(i))
 
     for i in range(len(agents)): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewAG.heading(columns[i+1], text=agentgroup[0][i])
+        treeviewAG.heading(columns[i], text=agentgroup[0][i])
     for i in range(1, len(agentgroup)): #
         try:
-            treeviewAG.insert('', i, values=(i-1, agentgroup[i][0], agentgroup[i][1], agentgroup[i][2], agentgroup[i][3], agentgroup[i][4], agentgroup[i][5],  agentgroup[i][6], agentgroup[i][7], agentgroup[i][8], agentgroup[i][9], agentgroup[i][10]))
+            treeviewAG.insert('', i, values=(agentgroup[i][0], agentgroup[i][1], agentgroup[i][2], agentgroup[i][3], agentgroup[i][4], agentgroup[i][5],  agentgroup[i][6], agentgroup[i][7], agentgroup[i][8], agentgroup[i][9], agentgroup[i][10]))
         except:
             treeviewA.insert('', i, values=(i))
 
     for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewW.heading(columns[i+1], text=walls[0][i])
+        treeviewW.heading(columns[i], text=walls[0][i])
     for i in range(1, len(walls)): #
         try:
-            treeviewW.insert('', i, values=(i-1, walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
+            treeviewW.insert('', i, values=(walls[i][0], walls[i][1], walls[i][2], walls[i][3], walls[i][4], walls[i][5],  walls[i][6], walls[i][7], walls[i][8]))
         except:
             treeviewW.insert('', i, values=(i))
             
-    for i in range(13): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
-        treeviewE.heading(columns[i+1], text=exits[0][i])
+    for i in range(9): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewE.heading(columns[i], text=exits[0][i])
     for i in range(1, len(exits)): #
         try: 
-            treeviewE.insert('', i, values=(i-1, exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
+            treeviewE.insert('', i, values=(exits[i][0], exits[i][1], exits[i][2], exits[i][3], exits[i][4], exits[i][5],  exits[i][6], exits[i][7], exits[i][8]))
         except:
             treeviewE.insert('', i, values=(i))
+            
+    for i in range(9): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewD.heading(columns[i], text=doors[0][i])
+    for i in range(1, len(doors)): #
+        try: 
+            treeviewD.insert('', i, values=(doors[i][0], doors[i][1], doors[i][2], doors[i][3], doors[i][4], doors[i][5],  doors[i][6], doors[i][7], doors[i][8]))
+        except:
+            treeviewD.insert('', i, values=(i))
+
+    for i in range(len(doors)): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
+        treeviewE2D.heading(columns[i], text=exit2door[0][i])
+    for i in range(1, len(exit2door)): #
+        try: 
+            treeviewE2D.insert('', i, values=(exit2door[i][0], exit2door[i][1], exit2door[i][2], exit2door[i][3], exit2door[i][4], exit2door[i][5],  exit2door[i][6], exit2door[i][7], exit2door[i][8]))
+        except:
+            treeviewE2D.insert('', i, values=(i))
 
 def file_save(event=None):
     pass
@@ -123,7 +140,7 @@ frameAgentGroup = Frame(root)
 frameWall = Frame(root)
 frameExit = Frame(root)
 frameDoor = Frame(root)
-
+frameExit2Door = Frame(root)
 
 notebook.add(frameAgent,text="  <AgentFeatures>  ")
 notebook.add(frameWall,text="  <Wall/Obstruction>  ")
@@ -131,6 +148,7 @@ notebook.add(frameExit,text="  <Exit/SinkPoint>  ")
 notebook.add(frameAgent2Exit,text="  <AgentExitProb>  ")
 notebook.add(frameDoor,text="  <Door/Passage/WayPoint>  ")
 notebook.add(frameAgentGroup,text="  <AgentGroup>  ")
+notebook.add(frameExit2Door,text="  <Exit2DoorArray>  ")
 
 #left_frame = Frame(root, width=200, height=600, bg="grey")
 #left_frame.pack_propagate(0)
@@ -140,7 +158,7 @@ notebook.add(frameAgentGroup,text="  <AgentGroup>  ")
 
 #columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
 
-columns = ("/", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
+columns = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
 
 scrollbarAy = Scrollbar(frameAgent, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarAy.pack(side=RIGHT, fill=Y)
@@ -152,7 +170,7 @@ treeviewA = Treeview(frameAgent, height=18, show="headings", columns=columns)  #
 scrollbarAy.config(command=treeviewA.yview)
 scrollbarAx.config(command=treeviewA.xview)
 
-treeviewA.column("/", width=30, anchor='center')
+#treeviewA.column("/", width=30, anchor='center')
 treeviewA.column("A", width=70, anchor='center')
 treeviewA.column("B", width=70, anchor='center')
 treeviewA.column("C", width=70, anchor='center')
@@ -188,7 +206,7 @@ treeviewA2E = Treeview(frameAgent2Exit, height=18, show="headings", columns=colu
 scrollbarA2Ey.config(command=treeviewA2E.yview)
 scrollbarA2Ex.config(command=treeviewA2E.xview)
 
-treeviewA2E.column("/", width=30, anchor='center')
+#treeviewA2E.column("/", width=30, anchor='center')
 treeviewA2E.column("A", width=70, anchor='center')
 treeviewA2E.column("B", width=70, anchor='center')
 treeviewA2E.column("C", width=70, anchor='center')
@@ -220,7 +238,7 @@ treeviewAG = Treeview(frameAgentGroup, height=18, show="headings", columns=colum
 scrollbarAGy.config(command=treeviewAG.yview)
 scrollbarAGx.config(command=treeviewAG.xview)
 
-treeviewAG.column("/", width=30, anchor='center')
+#treeviewAG.column("/", width=30, anchor='center')
 treeviewAG.column("A", width=70, anchor='center')
 treeviewAG.column("B", width=70, anchor='center')
 treeviewAG.column("C", width=70, anchor='center')
@@ -252,7 +270,7 @@ treeviewW = Treeview(frameWall, height=18, show="headings", columns=columns)  #T
 scrollbarWy.config(command=treeviewW.yview)
 scrollbarWx.config(command=treeviewW.xview)
 
-treeviewW.column("/", width=30, anchor='center')
+#treeviewW.column("/", width=30, anchor='center')
 treeviewW.column("A", width=100, anchor='center')
 treeviewW.column("B", width=70, anchor='center')
 treeviewW.column("C", width=70, anchor='center')
@@ -283,7 +301,7 @@ treeviewE = Treeview(frameExit, height=18, show="headings", columns=columns)  #T
 scrollbarEy.config(command=treeviewE.yview)
 scrollbarEx.config(command=treeviewE.xview)
 
-treeviewE.column("/", width=30, anchor='center')
+#treeviewE.column("/", width=30, anchor='center')
 treeviewE.column("A", width=100, anchor='center')
 treeviewE.column("B", width=70, anchor='center')
 treeviewE.column("C", width=70, anchor='center')
@@ -302,6 +320,70 @@ treeviewE.column("O", width=70, anchor='center')
 treeviewE.column("P", width=70, anchor='center')
 treeviewE.column("Q", width=70, anchor='center')
 treeviewE.pack(side=LEFT, fill=BOTH)
+
+
+### Frame of Exit
+scrollbarDy = Scrollbar(frameDoor, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarDy.pack(side=RIGHT, fill=Y)
+
+scrollbarDx = Scrollbar(frameDoor, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarDx.pack(side=BOTTOM, fill=X)
+
+treeviewD = Treeview(frameDoor, height=18, show="headings", columns=columns)  #Table
+scrollbarDy.config(command=treeviewD.yview)
+scrollbarDx.config(command=treeviewD.xview)
+
+#treeviewE.column("/", width=30, anchor='center')
+treeviewD.column("A", width=100, anchor='center')
+treeviewD.column("B", width=70, anchor='center')
+treeviewD.column("C", width=70, anchor='center')
+treeviewD.column("D", width=70, anchor='center')
+treeviewD.column("E", width=70, anchor='center')
+treeviewD.column("F", width=70, anchor='center')
+treeviewD.column("G", width=70, anchor='center')
+treeviewD.column("H", width=70, anchor='center')
+treeviewD.column("I", width=70, anchor='center')
+treeviewD.column("J", width=70, anchor='center')
+treeviewD.column("K", width=70, anchor='center')
+treeviewD.column("L", width=70, anchor='center')
+treeviewD.column("M", width=70, anchor='center')
+treeviewD.column("N", width=70, anchor='center')
+treeviewD.column("O", width=70, anchor='center')
+treeviewD.column("P", width=70, anchor='center')
+treeviewD.column("Q", width=70, anchor='center')
+treeviewD.pack(side=LEFT, fill=BOTH)
+
+
+### Frame of Exit
+scrollbarE2Dy = Scrollbar(frameExit2Door, orient="vertical") #, orient="vertical", command=treeview.yview)
+scrollbarE2Dy.pack(side=RIGHT, fill=Y)
+
+scrollbarE2Dx = Scrollbar(frameExit2Door, orient="horizontal") #, orient="vertical", command=treeview.yview)
+scrollbarE2Dx.pack(side=BOTTOM, fill=X)
+
+treeviewE2D = Treeview(frameExit2Door, height=18, show="headings", columns=columns)  #Table
+scrollbarE2Dy.config(command=treeviewE2D.yview)
+scrollbarE2Dx.config(command=treeviewE2D.xview)
+
+#treeviewE.column("/", width=30, anchor='center')
+treeviewD.column("A", width=100, anchor='center')
+treeviewD.column("B", width=70, anchor='center')
+treeviewD.column("C", width=70, anchor='center')
+treeviewD.column("D", width=70, anchor='center')
+treeviewD.column("E", width=70, anchor='center')
+treeviewD.column("F", width=70, anchor='center')
+treeviewD.column("G", width=70, anchor='center')
+treeviewD.column("H", width=70, anchor='center')
+treeviewD.column("I", width=70, anchor='center')
+treeviewD.column("J", width=70, anchor='center')
+treeviewD.column("K", width=70, anchor='center')
+treeviewD.column("L", width=70, anchor='center')
+treeviewD.column("M", width=70, anchor='center')
+treeviewD.column("N", width=70, anchor='center')
+treeviewD.column("O", width=70, anchor='center')
+treeviewD.column("P", width=70, anchor='center')
+treeviewD.column("Q", width=70, anchor='center')
+treeviewD.pack(side=LEFT, fill=BOTH)
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
@@ -359,7 +441,7 @@ def set_cell_value_A(event): # double click to edit the item
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <OK>', width=26, command=saveedit)
+    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <Save Item>', width=26, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
     
 
