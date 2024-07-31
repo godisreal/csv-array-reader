@@ -33,6 +33,9 @@ exit2door=None
 
 openFileName = None
 
+def file_new(event=None):
+    pass
+
 def file_open(event=None):
     
     global agents, agent2exit, agentgroup, walls, exits, doors
@@ -48,7 +51,14 @@ def file_open(event=None):
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
     agents, agent2exit, agentgroup, walls, exits, doors, exit2door = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
-
+    
+    treeviewA.delete(*treeviewA.get_children())    
+    treeviewA2E.delete(*treeviewA2E.get_children())
+    treeviewAG.delete(*treeviewAG.get_children())
+    treeviewE.delete(*treeviewE.get_children())
+    treeviewD.delete(*treeviewD.get_children())
+    treeviewW.delete(*treeviewW.get_children())
+    treeviewE2D.delete(*treeviewE2D.get_children())
     
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i], text=agents[0][i])
@@ -416,9 +426,9 @@ def set_cell_value_A(event): # double click to edit the item
     print("rn:", row)
 
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
-    entryedit = Text(root, width=26, height = 2)
+    entryedit = Text(root, width=56, height = 2)
     #entryedit = Entry(root,width=10)
-    entryedit.insert(END, agents[rn][0]+'|'+agents[0][cn-2]+' = '+str(item_text[cn-1]))
+    entryedit.insert(END, agents[rn][0]+'|'+agents[0][cn-1]+' = '+str(item_text[cn-1]))
     #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
     entryedit.pack()
     #lb= Label(root, text = str(rn)+columns[cn-1])
@@ -442,7 +452,7 @@ def set_cell_value_A(event): # double click to edit the item
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <Save Changes>', width=26, command=saveedit)
+    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-1]+': <Save Changes>', width=56, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
 
 def newrow_A():
@@ -458,12 +468,16 @@ def newrow_A():
     #row = treeviewA.identify_row(item)  # row
 
     #cn = int(str(column).replace('#',''))
-    rn = int(str(item).replace('I',''), base=16)
+    #rn = int(str(item).replace('I',''), base=16)
     try:
-        treeviewA.insert('', len(agents)-1, values=(item_text[0], item_text[1], item_text[2])) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+        treeviewA.insert('', len(agents)-1, values=(item_text[0], item_text[1], item_text[2],item_text[3], item_text[4], item_text[5],item_text[6], item_text[7], item_text[8], item_text[9], item_text[10])) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+        agents.append([item_text[0], item_text[1], item_text[2],item_text[3], item_text[4], item_text[5],item_text[6], item_text[7], item_text[8], item_text[9], item_text[10]])
+        #npzVE = np.concatenate((npzVE, tempVE), axis=0)
     except:
-        treeviewA.insert('', len(agents)-1, values=(int(rn)))
+        treeviewA.insert('', len(agents)-1, values=('agent'+str(len(agents)),0,0,0,0,0,0,0,0,0,0,0))
+        agents.append(['agent'+str(len(agents)), 0, 0,0,0,0,0,0,0,0,0,0])
     #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    print("len(agents)")
     treeviewA.update()
     
     #name.append('NoName')
@@ -513,6 +527,7 @@ menubar = Menu(root, bg="lightgrey", fg="black")
 root.config(menu=menubar)
 
 file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+file_menu.add_command(label="New", command=file_new, accelerator="Ctrl+N")
 file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
 file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
 menubar.add_cascade(label="File", menu=file_menu)

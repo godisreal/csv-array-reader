@@ -93,7 +93,7 @@ def getData(fileName, strNote):
             if j==Num_Data-1:
                 IPedEnd=Num_Data
 
-        dataOK = dataFeatures[IPedStart : IPedEnd]
+        dataOK = list(dataFeatures[IPedStart : IPedEnd])
         return dataOK, IPedStart, IPedEnd
 
     #data_result = np.array(dataOK)
