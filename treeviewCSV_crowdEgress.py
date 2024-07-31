@@ -48,6 +48,7 @@ def file_open(event=None):
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
     agents, agent2exit, agentgroup, walls, exits, doors, exit2door = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
+
     
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i], text=agents[0][i])
@@ -441,19 +442,60 @@ def set_cell_value_A(event): # double click to edit the item
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <Save Item>', width=26, command=saveedit)
+    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-2]+': <Save Changes>', width=26, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
-    
 
-def newrow():
-    name.append('NoName')
-    pos.append('IP')
-    vel.append('Trial')
-    treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+def newrow_A():
+    
+    global agents
+    for item in treeviewA.selection():
+        #item = I001
+        item_text = treeviewA.item(item, "values")
+        print(item_text)
+        print(item)
+        #print(item_text[0:2])  # Output the column number selected by users
+    #column= treeviewA.identify_column(event.x)# column
+    #row = treeviewA.identify_row(item)  # row
+
+    #cn = int(str(column).replace('#',''))
+    rn = int(str(item).replace('I',''), base=16)
+    try:
+        treeviewA.insert('', len(agents)-1, values=(item_text[0], item_text[1], item_text[2])) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+    except:
+        treeviewA.insert('', len(agents)-1, values=(int(rn)))
+    #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
     treeviewA.update()
+    
+    #name.append('NoName')
+    #pos.append('IP')
+    #vel.append('Trial')
+    #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    #treeviewA.update()
 
     #newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
     #newb.update()
+
+def deleterow_A():
+    
+    global agents
+    for item in treeviewA.selection():
+        #item = I001
+        item_text = treeviewA.item(item, "values")
+        print(item_text)
+        print(item)
+
+    #cn = int(str(column).replace('#',''))
+    rn = int(str(item).replace('I',''), base=16)
+    try:
+        treeviewA.delete(item) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+    except:
+        treeviewA.delete(item)
+    #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    treeviewA.update()
+
+def set_cell_value_W(event):
+    global walls
+    pass
 
 treeviewA.bind('<Double-1>', set_cell_value_A) # Double click to edit items
 root.bind("<Control-o>", file_open)
@@ -476,11 +518,11 @@ file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
 menubar.add_cascade(label="File", menu=file_menu)
 
 add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-add_menu.add_command(label="Add Item", command=newrow, accelerator="Ctrl+A")
+add_menu.add_command(label="Add Item", command=newrow_A, accelerator="Ctrl+A")
 menubar.add_cascade(label="Add", menu=add_menu)
 
 delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctrl+D")
+delete_menu.add_command(label="Delete Item", command=deleterow_A, accelerator="Ctrl+D")
 menubar.add_cascade(label="Delete", menu=delete_menu)
 
 root.mainloop()
