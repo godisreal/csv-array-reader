@@ -132,8 +132,6 @@ def file_open(event=None):
         
     openCSV=True
 
-
-
 def file_save(event=None):
 
     global dataCSV
@@ -212,39 +210,7 @@ treeviewA.column("O", width=70, anchor='center')
 treeviewA.column("P", width=70, anchor='center')
 treeviewA.column("Q", width=70, anchor='center')
 
-'''
-treeviewA.column("agent", width=100, anchor='center')
-treeviewA.column("iniPosX", width=70, anchor='center')
-treeviewA.column("iniPosY", width=70, anchor='center')
-treeviewA.column("iniVx", width=70, anchor='center')
-treeviewA.column("iniVy", width=70, anchor='center')
-treeviewA.column("timelag", width=70, anchor='center')
-treeviewA.column("tpre", width=70, anchor='center')
-treeviewA.column("p", width=70, anchor='center')
-treeviewA.column("pMode", width=70, anchor='center')
-treeviewA.column("p2", width=70, anchor='center')
-treeviewA.column("talkRange", width=70, anchor='center')
-treeviewA.column("aType", width=70, anchor='center')
-treeviewA.column("inComp", width=70, anchor='center')
-treeviewA.column("tpreMode", width=70, anchor='center')
-
-#treeviewA.heading("agent", text="agent") # Show table headings
-#treeviewA.heading("iniPosX", text="iniPosX")
-#treeviewA.heading("iniPosY", text="iniPosY")
-#treeviewA.heading("iniVx", text='iniVx')
-#treeviewA.heading("iniVy", text='iniVy')
-#treeviewA.heading("timelag", text='timelag')
-#treeviewA.heading("tpre", text='tpre')
-#treeviewA.heading("p", text='p')
-#treeviewA.heading("pMode", text='pMode')
-#treeviewA.heading("p2", text='p2')
-#treeviewA.heading("talkRange", text='talkRange')
-#treeviewA.heading("aType", text='aType')
-#treeviewA.heading("inComp", text='inComp')
-#treeviewA.heading("tpreMode", text='tpreMode')
-'''
 treeviewA.pack(side=LEFT, fill=BOTH)
-
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
@@ -306,17 +272,49 @@ def set_cell_value(event): # double click to edit the item
     
 
 def newrow():
-    name.append('NoName')
-    pos.append('IP')
-    vel.append('Trial')
-    treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+
+    for item in treeviewA.selection():
+        #item = I001
+        item_text = treeviewA.item(item, "values")
+        print(item_text)
+        print(item)
+        print(item.index)
+        #print(item_text[0:2])  # Output the column number selected by users
+    
+    rn = int(str(item).replace('I',''), base=16)
+    
+    try:
+        treeviewA.insert('', int(rn), values=((int(rn)+1), item_text[1], item_text[2], item_text[3])) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+    except:
+        treeviewA.insert('', int(rn), values=(int(rn)+1))
+    #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
     treeviewA.update()
 
     #newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
     #newb.update()
+    
+def deleterow():
+    
+    global dataCSV
+    for item in treeviewA.selection():
+        #item = I001
+        item_text = treeviewA.item(item, "values")
+        print(item_text)
+        print(item)
+
+    #cn = int(str(column).replace('#',''))
+    rn = int(str(item).replace('I',''), base=16)
+    try:
+        treeviewA.delete(item) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+    except:
+        treeviewA.delete(item)
+    #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    treeviewA.update()
+    
 
 treeviewA.bind('<Double-1>', set_cell_value) # Double click to edit items
-
+root.bind("<Control-o>", file_open)
+root.bind("<Control-s>", file_save)
 #newb = Button(root, text='New Agent', width=20, command=newrow)
 #newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
 for col in columns:  # bind function: enable sorting in table headings
@@ -338,7 +336,7 @@ add_menu.add_command(label="Add Item", command=newrow, accelerator="Ctrl+A")
 menubar.add_cascade(label="Add", menu=add_menu)
 
 delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctrl+D")
+delete_menu.add_command(label="Delete Item", command=deleterow, accelerator="Ctrl+D")
 menubar.add_cascade(label="Delete", menu=delete_menu)
 
 root.mainloop()
