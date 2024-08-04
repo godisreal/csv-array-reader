@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from functools import partial
-#import re
+import re
 
 class Editor(tk.Tk):
     def __init__(self):
@@ -53,9 +53,9 @@ class Editor(tk.Tk):
                 if len(file_lines) > 0:
                     for index, line in enumerate(file_lines):
                         index = float(index) + 1.0
-                        #line_t = re.sub(r',', ',\t', line)
-                        #self.main_text.insert(index, line_t)
-                        self.main_text.insert(index, line)
+                        line_t = re.sub(r',', ',\t', line)
+                        self.main_text.insert(index, line_t)
+                        #self.main_text.insert(index, line)
         self.title(" - ".join([self.WINDOW_TITLE, self.open_file]))
 
     def file_save(self, event=None):
