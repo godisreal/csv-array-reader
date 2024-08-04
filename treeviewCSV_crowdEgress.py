@@ -37,12 +37,12 @@ def file_new(event=None):
     global agents, agent2exit, agentgroup, walls, exits, doors, exit2door
     
     agents=[['agent', 'iniX', 'iniY', 'iniVx', 'iniVy', 'timelag', 'tpre', 'p', 'pMode', 'p2', 'talkRange', 'talkProb', 'inComp', 'aType']]
-    agent2exit=[]
-    agentgroup=[]
+    agent2exit=[['agent2exit', 'exit0', 'exit1', 'exit2', 'exit3', 'exit4', 'exit5', 'exit6']]
+    agentgroup=[['agent2group', 'agent0', 'agent1', 'agent2','agent3', 'agent4', 'agent5', 'agent6']]
     walls=[]
     exits=[]
     doors=[]
-    exit2door=[]
+    exit2door=[['exit2door', 'door0', 'door1', 'door2']]
        
     treeviewA.delete(*treeviewA.get_children())    
     treeviewA2E.delete(*treeviewA2E.get_children())
@@ -51,6 +51,9 @@ def file_new(event=None):
     treeviewD.delete(*treeviewD.get_children())
     treeviewW.delete(*treeviewW.get_children())
     treeviewE2D.delete(*treeviewE2D.get_children())
+    treeviewA.update()    
+    treeviewA2E.update()    
+    treeviewAG.update()
     
     for i in range(15): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i], text=agents[0][i])
@@ -605,30 +608,36 @@ file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
 file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
 menubar.add_cascade(label="File", menu=file_menu)
 
-add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-add_menu.add_command(label="Add Item", command=newrow_A, accelerator="Ctrl+A")
-menubar.add_cascade(label="Add", menu=add_menu)
+#add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+#add_menu.add_command(label="Add Item", command=newrow_A, accelerator="Ctrl+A")
+#menubar.add_cascade(label="Add", menu=add_menu)
 
-delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-delete_menu.add_command(label="Delete Item", command=deleterow_A, accelerator="Ctrl+D")
-menubar.add_cascade(label="Delete", menu=delete_menu)
+#delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+#delete_menu.add_command(label="Delete Item", command=deleterow_A, accelerator="Ctrl+D")
+#menubar.add_cascade(label="Delete", menu=delete_menu)
 
-newb = Button(frameAgent, text='New Agent', width=20, command=newrow_A)
-newb.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+newA = Button(frameAgent, text='New Agent', width=20, command=newrow_A)
+newA.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
 
-newb = Button(frameAgent, text='Delete Agent', width=20, command=deleterow_A)
-newb.pack() #place(x=120,y=20 )
+delA = Button(frameAgent, text='Delete Agent', width=20, command=deleterow_A)
+delA.pack() #place(x=120,y=20 )
 
-newb = Button(frameAgent2Exit, text='New Agent2Exit', width=20, command=newrow_A)
-newb.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+newA2E = Button(frameAgent2Exit, text='New Agent2Exit', width=20, command=newrow_A)
+newA2E.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
 
-newb = Button(frameAgent2Exit, text='Delete Agent2Exit', width=20, command=deleterow_A)
-newb.pack() #place(x=120,y=20 )
+delA2E = Button(frameAgent2Exit, text='Delete Agent2Exit', width=20, command=deleterow_A)
+delA2E.pack() #place(x=120,y=20 )
 
-newb = Button(frameAgentGroup, text='New AgentGroup', width=20, command=newrow_A)
-newb.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+newAG = Button(frameAgentGroup, text='New AgentGroup', width=20, command=newrow_A)
+newAG.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
 
-newb = Button(frameAgentGroup, text='Delete AgentGroup', width=20, command=deleterow_A)
-newb.pack() #place(x=120,y=20 )
+delAG = Button(frameAgentGroup, text='Delete AgentGroup', width=20, command=deleterow_A)
+delAG.pack() #place(x=120,y=20 )
+
+newW = Button(frameWall, text='New Wall', width=20, command=newrow_A)
+newW.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+
+delW = Button(frameWall, text='Delete Wall', width=20, command=deleterow_A)
+delW.pack() #place(x=120,y=20 )
 
 root.mainloop()
