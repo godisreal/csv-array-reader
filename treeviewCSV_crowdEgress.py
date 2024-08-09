@@ -39,9 +39,9 @@ def file_new(event=None):
     agents=[['agent', 'iniX', 'iniY', 'iniVx', 'iniVy', 'timelag', 'tpre', 'p', 'pMode', 'p2', 'talkRange', 'talkProb', 'inComp', 'aType']]
     agent2exit=[['agent2exit', 'exit0', 'exit1', 'exit2', 'exit3', 'exit4', 'exit5', 'exit6']]
     agentgroup=[['agent2group', 'agent0', 'agent1', 'agent2','agent3', 'agent4', 'agent5', 'agent6']]
-    walls=[]
-    exits=[]
-    doors=[]
+    walls=['walls', 'startX', 'startY', 'endX', 'endY', 'arrow', 'shape', 'inComp']
+    exits=['exits', 'startX', 'startY', 'endX', 'endY', 'arrow', 'shape', 'inComp']
+    doors=['doors', 'startX', 'startY', 'endX', 'endY', 'arrow', 'shape', 'inComp']
     exit2door=[['exit2door', 'door0', 'door1', 'door2']]
        
     treeviewA.delete(*treeviewA.get_children())    
@@ -639,5 +639,17 @@ newW.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
 
 delW = Button(frameWall, text='Delete Wall', width=20, command=deleterow_A)
 delW.pack() #place(x=120,y=20 )
+
+newE = Button(frameExit, text='New Exit', width=20, command=newrow_A)
+newE.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+
+delE = Button(frameExit, text='Delete Exit', width=20, command=deleterow_A)
+delE.pack() #place(x=120,y=20 )
+
+newD = Button(frameDoor, text='New Door', width=20, command=newrow_A)
+newD.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
+
+delD = Button(frameDoor, text='Delete Door', width=20, command=deleterow_A)
+delD.pack() #place(x=120,y=20 )
 
 root.mainloop()
