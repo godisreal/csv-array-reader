@@ -70,7 +70,7 @@ def readCSV_base(fileName):
 
 # Not used after the flow solver is integrated into our program
 # This function was originally developed to dump exit2door data in TestGeom
-def saveCSV(dataNP, outputFile, inputFile=None):
+def saveCSV(dataNP, outputFile, inputStr=''):
     
     (I, J) = np.shape(dataNP)
     #(I, J) = np.shape(exit2doors)
@@ -80,19 +80,19 @@ def saveCSV(dataNP, outputFile, inputFile=None):
     #dataNP[1:, 1:] = exit2doors
     #np.savetxt(fileName, dataNP, delimiter=',', fmt='%s')   #'2darray.csv'
     try:
-        with open(outputFile, mode='wb+', newline='') as exit2door_file:
-            csv_writer = csv.writer(exit2door_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            if inputFile is not None:
-                csv_writer.writerow([inputFile])
+        with open(outputFile, mode='w+', newline='') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputStr:
+                csv_writer.writerow([inputStr])
             for i in range(I):
                 #print(dataNP[i])
                 csv_writer.writerow(dataNP[i])
     
     except:
-        with open(outputFile, mode='wb+') as exit2door_file:
-            csv_writer = csv.writer(exit2door_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            if inputFile is not None:
-                csv_writer.writerow([inputFile])
+        with open(outputFile, mode='w+') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputStr:
+                csv_writer.writerow([inputStr])
             #csv_writer.writerow(['&Wall', '0/startX', '1/startY', '2/endX', '3/endY', '4/arrow', '5/shape', '6/inComp'])
             #index_temp=0
             for i in range(I):
@@ -100,7 +100,23 @@ def saveCSV(dataNP, outputFile, inputFile=None):
             #for wall in walls:
             #    csv_writer.writerow(['--', str(wall.params[0]), str(wall.params[1]), str(wall.params[2]), str(wall.params[3]), str(wall.arrow), str(wall.mode), str(wall.inComp)])
             #    index_temp=index_temp+1
+
+
+def file_new(event=None):
     
+    global dataCSV
+    global openCSV
+    global openFileName
+       
+    dataCSV=[]
+    treeviewA.delete(*treeviewA.get_children())    
+    treeviewA.update()    
+    for i in range(np.shape(dataCSV)[0]): #
+        try:
+            treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
+        except:
+            treeviewA.insert('', i, values=(i+1))
+            
 
 def file_open(event=None):
     
@@ -132,12 +148,16 @@ def file_open(event=None):
         
     openCSV=True
 
+
 def file_save(event=None):
 
     global dataCSV
     global openCSV
     global openFileName
 
+    new_file_name = tkf.asksaveasfilename()
+    if new_file_name:
+        openFileName = new_file_name
     if openCSV is False:
         msg.showerror("No File Open", "Please open an ini file first")
         return
@@ -280,9 +300,11 @@ def newrow():
         print(item)
         print(item.index)
         #print(item_text[0:2])  # Output the column number selected by users
-    
-    rn = int(str(item).replace('I',''), base=16)
-    
+    try:
+        rn = int(str(item).replace('I',''), base=16)
+    except:
+        rn = int(np.shape(dataCSV)[0])
+        
     try:
         treeviewA.insert('', int(rn), values=((int(rn)+1), item_text[1], item_text[2], item_text[3])) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
     except:
@@ -313,8 +335,11 @@ def deleterow():
     
 
 treeviewA.bind('<Double-1>', set_cell_value) # Double click to edit items
+root.bind("<Control-n>", file_new)
 root.bind("<Control-o>", file_open)
 root.bind("<Control-s>", file_save)
+root.bind("<Control-a>", newrow)
+root.bind("<Control-d>", deleterow)
 #newb = Button(root, text='New Agent', width=20, command=newrow)
 #newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
 for col in columns:  # bind function: enable sorting in table headings
@@ -327,6 +352,7 @@ menubar = Menu(root, bg="lightgrey", fg="black")
 root.config(menu=menubar)
 
 file_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+file_menu.add_command(label="New", command=file_new, accelerator="Ctrl+N")
 file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
 file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
 menubar.add_cascade(label="File", menu=file_menu)
