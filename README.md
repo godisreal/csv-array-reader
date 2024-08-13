@@ -15,6 +15,8 @@ python textCSV_edit.py
  --> quit the program
 The program has been tested in windows and linux OS.  If you find any bugs when running the program, please report the bugs by using issue trackers.   
 
+The major codework was initially learned from a manuscript by David Love.  
+Python Tkinter By Example, January 18, 2018
 
 
 
