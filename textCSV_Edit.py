@@ -51,7 +51,7 @@ class FindPopup(tk.Toplevel):
         self.find_entry.bind("<Return>", self.jump_to_next_match)
         self.find_entry.bind("<KeyRelease>", self.matches_are_not_highlighted)
         self.bind("<Escape>", self.cancel)
-    
+        
         self.protocol("WM_DELETE_WINDOW", self.cancel)
 
     def find(self, event=None):
@@ -99,7 +99,7 @@ class Editor(tk.Tk):
     def __init__(self):
         super().__init__()
     
-        self.FONT_SIZE = 12
+        self.FONT_SIZE = 10
         self.AUTOCOMPLETE_WORDS = ["def", "import", "if", "else", "while", "for","try:", "except:", "print(", "True", "False"]
         self.WINDOW_TITLE = "Text Editor"
         self.open_file = ""
@@ -123,7 +123,7 @@ class Editor(tk.Tk):
         self.configure(menu=self.menubar)
         
         
-        self.line_numbers = Text(self, bg="lightgrey", fg="black", width=6)
+        self.line_numbers = Text(self, bg="lightgrey", fg="black", width=6, font=("Times", self.FONT_SIZE))
         self.line_numbers.insert(1.0, "1 \n")
         self.line_numbers.configure(state="disabled")
         self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
@@ -133,7 +133,7 @@ class Editor(tk.Tk):
         #self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         
-        self.main_text = tk.Text(self, bg="white", fg="black", font=("Ubuntu Mono", self.FONT_SIZE))
+        self.main_text = tk.Text(self, bg="white", fg="black", font=("Times", self.FONT_SIZE))
         self.main_text.pack(expand=1, fill=tk.BOTH)
     
         self.main_text.bind("<space>", self.destroy_autocomplete_menu)
@@ -143,7 +143,40 @@ class Editor(tk.Tk):
         self.bind("<Control-s>", self.file_save)
         self.bind("<Control-o>", self.file_open)
         self.bind("<Control-n>", self.file_new)
+        
+        self.bind("<Control-a>", self.select_all)
+        self.bind("<Control-f>", self.show_find_window)
 
+        self.main_text.bind("<MouseWheel>", self.scroll_text_and_line_numbers)
+        self.main_text.bind("<Button-4>", self.scroll_text_and_line_numbers)
+        self.main_text.bind("<Button-5>", self.scroll_text_and_line_numbers)
+        self.line_numbers.bind("<MouseWheel>", self.skip_event)
+        self.line_numbers.bind("<Button-4>", self.skip_event)
+        self.line_numbers.bind("<Button-5>", self.skip_event)
+
+    def skip_event(self, event=None):
+        pass
+
+    def scroll_text_and_line_numbers(self, *args):  
+        try:
+            # from scrollbar
+            self.main_text.yview_moveto(args[1])
+            self.line_numbers.yview_moveto(args[1])
+        except IndexError:
+            #from MouseWheel
+            event = args[0]
+            if event.delta:
+                move = -1*(event.delta/120)
+            else:
+                if event.num == 5:
+                    move = 1
+                else:
+                    move = -1
+    
+            self.main_text.yview_scroll(int(move), "units")
+            self.line_numbers.yview_scroll(int(move), "units")
+
+        
     def file_new(self, event=None):
         file_name = filedialog.asksaveasfilename()
         if file_name:
@@ -167,6 +200,8 @@ class Editor(tk.Tk):
                         self.main_text.insert(index, line_t)
                         #self.main_text.insert(index, line)
         self.title(" - ".join([self.WINDOW_TITLE, self.open_file]))
+        self.update_line_numbers()
+        
 
     def file_save(self, event=None):
         if not self.open_file:
