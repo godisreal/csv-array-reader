@@ -12,6 +12,7 @@ if sys.version_info[0] == 3: # Python 3
     from tkinter.ttk import Treeview
     from tkinter.ttk import Button
     import tkinter.filedialog as tkf
+    import tkinter.messagebox as msg
 else:
     # Python 2
     from Tkinter import *
@@ -19,6 +20,7 @@ else:
     from ttk import Treeview
     from ttk import Entry
     import tkFileDialog as tkf
+    import tkMessageBox as msg
     
 
 class FindPopup(tk.Toplevel):
@@ -100,8 +102,8 @@ class Editor(tk.Tk):
         super().__init__()
     
         self.FONT_SIZE = 10
-        self.AUTOCOMPLETE_WORDS = ["def", "import", "if", "else", "while", "for","try:", "except:", "print(", "True", "False"]
-        self.WINDOW_TITLE = "Text Editor"
+        #self.AUTOCOMPLETE_WORDS = ["def", "import", "if", "else", "while", "for","try:", "except:", "print(", "True", "False"]
+        self.WINDOW_TITLE = "CSV Text Editor"
         self.open_file = ""
         self.title(self.WINDOW_TITLE)
         self.geometry("800x600")
@@ -123,21 +125,21 @@ class Editor(tk.Tk):
         self.configure(menu=self.menubar)
         
         
-        self.line_numbers = Text(self, bg="lightgrey", fg="black", width=6, font=("Times", self.FONT_SIZE))
-        self.line_numbers.insert(1.0, "1 \n")
-        self.line_numbers.configure(state="disabled")
-        self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
-
-        #self.scrollbar = Scrollbar(self, orient="vertical", command=self.scroll_text_and_line_numbers)
-        #self.main_text.configure(yscrollcommand=self.scrollbar.set)
-        #self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        
-        
+        #self.line_numbers = Text(self, bg="lightgrey", fg="black", width=6, font=("Times", self.FONT_SIZE))
+        #self.line_numbers.insert(1.0, "1 \n")
+        #self.line_numbers.configure(state="disabled")
+        #self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
+                
         self.main_text = tk.Text(self, bg="white", fg="black", font=("Times", self.FONT_SIZE))
         self.main_text.pack(expand=1, fill=tk.BOTH)
+
+        #self.scrollbar = Scrollbar(self, orient="vertical") #, command=self.scroll_text_and_line_numbers)
+        #self.main_text.configure(yscrollcommand=self.scrollbar.set)
+        #self.scrollbar.config(command=self.main_text.yview)
+        #self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
     
         self.main_text.bind("<space>", self.destroy_autocomplete_menu)
-        self.main_text.bind("<KeyRelease>", self.display_autocomplete_menu)
+        #self.main_text.bind("<KeyRelease>", self.display_autocomplete_menu)
         self.main_text.bind("<Tab>", self.insert_spaces)
     
         self.bind("<Control-s>", self.file_save)
@@ -147,6 +149,10 @@ class Editor(tk.Tk):
         self.bind("<Control-a>", self.select_all)
         self.bind("<Control-f>", self.show_find_window)
 
+        self.bind("<Control-z>", self.edit_undo)
+        self.bind("<Control-y>", self.edit_redo)
+
+    '''
         self.main_text.bind("<MouseWheel>", self.scroll_text_and_line_numbers)
         self.main_text.bind("<Button-4>", self.scroll_text_and_line_numbers)
         self.main_text.bind("<Button-5>", self.scroll_text_and_line_numbers)
@@ -175,7 +181,7 @@ class Editor(tk.Tk):
     
             self.main_text.yview_scroll(int(move), "units")
             self.line_numbers.yview_scroll(int(move), "units")
-
+    '''
         
     def file_new(self, event=None):
         file_name = filedialog.asksaveasfilename()
@@ -200,7 +206,7 @@ class Editor(tk.Tk):
                         self.main_text.insert(index, line_t)
                         #self.main_text.insert(index, line)
         self.title(" - ".join([self.WINDOW_TITLE, self.open_file]))
-        self.update_line_numbers()
+        #self.update_line_numbers()
         
 
     def file_save(self, event=None):
@@ -215,7 +221,7 @@ class Editor(tk.Tk):
 
     def select_all(self, event=None):
         self.main_text.tag_add("sel", 1.0, tk.END)
-        return "break"
+        return None
 
     def edit_cut(self, event=None):
         self.main_text.event_generate("<<Cut>>")
@@ -311,6 +317,7 @@ class Editor(tk.Tk):
         except tk.TclError:
             pass
     
+    '''
     def tag_all_lines(self):
         final_index = self.main_text.index(tk.END)
         final_line_number = int(final_index.split(".")[0])
@@ -327,6 +334,7 @@ class Editor(tk.Tk):
         line_number_string = "\n".join(str(no+1) for no in range(int(number_of_lines)))
         self.line_numbers.insert(1.0, line_number_string)
         self.line_numbers.configure(state="disabled")
+    '''
     
     def show_find_window(self, event=None):
         FindPopup(self)
