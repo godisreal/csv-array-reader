@@ -39,6 +39,7 @@ else:
 dataCSV = None
 openCSV = False
 openFileName = None
+FONT_SIZE = 16
 
 def readCSV_base(fileName):
     
@@ -101,6 +102,19 @@ def saveCSV(dataNP, outputFile, inputStr=''):
             #    csv_writer.writerow(['--', str(wall.params[0]), str(wall.params[1]), str(wall.params[2]), str(wall.params[3]), str(wall.arrow), str(wall.mode), str(wall.inComp)])
             #    index_temp=index_temp+1
 
+'''
+def update_line_numbers(event=None):
+    
+    global dataCSV
+    
+    line_numbers.configure(state="normal")
+    line_numbers.delete(1.0, END)
+    number_of_lines = np.shape(dataCSV)[0]
+    line_number_string = "\n".join(str(no+1) for no in range(int(number_of_lines)))
+    line_number_string = "\n"+line_number_string
+    line_numbers.insert(1.0, line_number_string)
+    line_numbers.configure(state="disabled")
+'''
 
 def file_new(event=None):
     
@@ -136,6 +150,8 @@ def file_open(event=None):
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
+    file_name_label.config(text=openFileName, fg="black", bg="lightgrey", font=(None, 10))
+    
     iniArray = readCSV_base(fnameCSV)
     print(iniArray)
     dataCSV = iniArray
@@ -147,6 +163,8 @@ def file_open(event=None):
             treeviewA.insert('', i, values=(i+1))
         
     openCSV=True
+    #update_line_numbers()
+
 
 
 def file_save(event=None):
@@ -159,7 +177,7 @@ def file_save(event=None):
     if new_file_name:
         openFileName = new_file_name
     if openCSV is False:
-        msg.showerror("No File Open", "Please open an ini file first")
+        msg.showerror("No File Open", "Please open an csv file first")
         return
 
     #with open(self.active_ini_filename, "w") as ini_file:
@@ -171,8 +189,15 @@ def file_save(event=None):
 root = Tk() 
 
 file_name_var = StringVar()
-file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 12))
+file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 13))
 file_name_label.pack(side=TOP, expand=1, fill=X)
+
+'''
+line_numbers = Text(root, bg="lightgrey", fg="black", width=6,  font=(None, 12))
+line_numbers.insert(1.0, "\n 1 \n")
+line_numbers.configure(state="disabled")
+line_numbers.pack(side=LEFT, fill=Y)
+'''        
 
 '''
 root.config(menu=menubar)
@@ -340,6 +365,31 @@ root.bind("<Control-o>", file_open)
 root.bind("<Control-s>", file_save)
 root.bind("<Control-a>", newrow)
 root.bind("<Control-d>", deleterow)
+
+
+
+def skip_event(self, event=None):
+    pass
+
+def scroll_text_and_line_numbers(*args):  
+    try:
+        # from scrollbar
+        treeviewA.yview_moveto(args[1])
+        line_numbers.yview_moveto(args[1])
+    except IndexError:
+        #from MouseWheel
+        event = args[0]
+        if event.delta:
+            move = -1*(event.delta/120)
+        else:
+            if event.num == 5:
+                move = 1
+            else:
+                move = -1
+
+        self.main_text.yview_scroll(int(move), "units")
+        self.line_numbers.yview_scroll(int(move), "units")
+
 #newb = Button(root, text='New Agent', width=20, command=newrow)
 #newb.place(x=120,y=20 ) #(len(name)-1)*20+45)
 for col in columns:  # bind function: enable sorting in table headings
