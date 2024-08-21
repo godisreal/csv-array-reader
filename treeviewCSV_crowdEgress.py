@@ -14,6 +14,7 @@ if sys.version_info[0] == 3: # Python 3
     from tkinter.ttk import Treeview
     from tkinter.ttk import Button
     import tkinter.filedialog as tkf
+    import tkinter.messagebox as msg
 else:
     # Python 2
     from Tkinter import *
@@ -21,6 +22,7 @@ else:
     from ttk import Treeview
     from ttk import Entry
     import tkFileDialog as tkf
+    import tkMessageBox as msg
 
 
 agents=None
@@ -33,8 +35,10 @@ exit2door=None
 
 openFileName = None
 
+
 def file_new(event=None):
     global agents, agent2exit, agentgroup, walls, exits, doors, exit2door
+    global openFileName
     
     agents=[['agent', 'iniX', 'iniY', 'iniVx', 'iniVy', 'timelag', 'tpre', 'p', 'pMode', 'p2', 'talkRange', 'talkProb', 'inComp', 'aType']]
     agent2exit=[['agent2exit', 'exit0', 'exit1', 'exit2', 'exit3', 'exit4', 'exit5', 'exit6']]
@@ -115,6 +119,7 @@ def file_new(event=None):
 def file_open(event=None):
     
     global agents, agent2exit, agentgroup, walls, exits, doors, exit2door
+    global openFileName
     
     fnameCSV = tkf.askopenfilename(filetypes=(("csv files", "*.csv"),("All files", "*.*"))) #,initialdir=self.currentdir)
         #temp=self.fname_EVAC.split('/') 
@@ -125,7 +130,10 @@ def file_open(event=None):
     print('fname', fnameCSV)
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
+    if fnameCSV:
+        openFileName = fnameCSV
     
+    file_name_label.config(text=fnameCSV, fg="black", bg="lightgrey", font=(None, 10))
     agents, agent2exit, agentgroup, walls, exits, doors, exit2door = readCrowdEgressCSV(fnameCSV, debug=True, marginTitle=1)
     
     treeviewA.delete(*treeviewA.get_children())    
@@ -193,12 +201,67 @@ def file_open(event=None):
             treeviewE2D.insert('', i, values=(i))
 
 def file_save(event=None):
-    pass
+
+    global agents, agent2exit, agentgroup, walls, exits, doors, exit2door
+    global openFileName
+
+    new_file_name = filedialog.asksaveasfilename()
+    if new_file_name:
+        openFileName = new_file_name
+
+    if openFileName:
+        #with open(self.active_ini_filename, "w") as ini_file:
+        #self.active_ini.write(ini_file)
+
+        saveCSV(agents, openFileName, 'Agent Data is written as below.')
+        saveCSV(agent2exit, openFileName, 'Exit selection probilibty is written as below.')
+        saveCSV(agentgroup, openFileName, 'Agent group data is written as below.')
+        
+        msg.showinfo("Saved", "File Saved Successfully")
+    else:
+        msg.showerror("No File Open", "Please open an csv file first")
+        return
+
+
+def saveCSV(dataNP, outputFile, inputStr=''):
     
-root = Tk() 
+    (I, J) = np.shape(dataNP)
+    #(I, J) = np.shape(exit2doors)
+    #print "The size of exit2door:", [I, J]
+    #dataNP = np.zeros((I+1, J+1))
+
+    #dataNP[1:, 1:] = exit2doors
+    #np.savetxt(fileName, dataNP, delimiter=',', fmt='%s')   #'2darray.csv'
+    try:
+        with open(outputFile, mode='a+', newline='') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputStr:
+                csv_writer.writerow([inputStr])
+            for i in range(I):
+                #print(dataNP[i])
+                csv_writer.writerow(dataNP[i])
+            csv_writer.writerow([])
+            csv_writer.writerow([])               
+    
+    except:
+        with open(outputFile, mode='a+') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if inputStr:
+                csv_writer.writerow([inputStr])
+            #csv_writer.writerow(['&Wall', '0/startX', '1/startY', '2/endX', '3/endY', '4/arrow', '5/shape', '6/inComp'])
+            #index_temp=0
+            for i in range(I):
+                csv_writer.writerow(dataNP[i])
+            csv_writer.writerow([])
+            csv_writer.writerow([])
+            #for wall in walls:
+            #    csv_writer.writerow(['--', str(wall.params[0]), str(wall.params[1]), str(wall.params[2]), str(wall.params[3]), str(wall.arrow), str(wall.mode), str(wall.inComp)])
+            #    index_temp=index_temp+1
+
+root = Tk()
 
 file_name_var = StringVar()
-file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 12))
+file_name_label = Label(root, textvar=openFileName, fg="black", bg="lightgrey", font=(None, 12))
 file_name_label.pack(side=TOP, expand=1, fill=X)
 
 '''
@@ -245,7 +308,7 @@ notebook.add(frameExit2Door,text="  <Exit2DoorArray>  ")
 
 #columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
 
-columns = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
+columns = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R")
 
 scrollbarAy = Scrollbar(frameAgent, orient="vertical") #, orient="vertical", command=treeview.yview)
 scrollbarAy.pack(side=RIGHT, fill=Y)
@@ -275,8 +338,6 @@ treeviewA.column("N", width=70, anchor='center')
 treeviewA.column("O", width=70, anchor='center')
 treeviewA.column("P", width=70, anchor='center')
 treeviewA.column("Q", width=70, anchor='center')
-
-
 treeviewA.pack(side=LEFT, fill=BOTH)
 
 #scrollbar = Scrollbar(treeviewA, orient="vertical", command=treeviewA.yview)
@@ -477,11 +538,10 @@ def treeview_sort_column(tv, col, reverse):  # Treeview
     l = [(tv.set(k, col), k) for k in tv.get_children('')]
     l.sort(reverse=reverse)  # sort method
     # rearrange items in sorted positions
-
     for index, (val, k) in enumerate(l):
         tv.move(k, '', index)
-
     tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 
+
 
 def set_cell_value_A(event): # double click to edit the item
     
@@ -586,6 +646,8 @@ def deleterow_A():
 def set_cell_value_W(event):
     global walls
     pass
+    
+    
 
 treeviewA.bind('<Double-1>', set_cell_value_A) # Double click to edit items
 root.bind("<Control-o>", file_open)
