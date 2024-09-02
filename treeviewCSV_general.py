@@ -124,12 +124,13 @@ def file_new(event=None):
        
     dataCSV=[]
     treeviewA.delete(*treeviewA.get_children())    
-    treeviewA.update()    
+    treeviewA.update()   
     for i in range(np.shape(dataCSV)[0]): #
         try:
             treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
         except:
             treeviewA.insert('', i, values=(i+1))
+    openCSV=True
             
 
 def file_open(event=None):
@@ -150,12 +151,13 @@ def file_open(event=None):
     #setStatusStr("Simulation not yet started!")
     #textInformation.insert(END, '\n'+'EVAC Input File Selected:   '+self.fname_EVAC+'\n')
     
-    file_name_label.config(text=openFileName, fg="black", bg="lightgrey", font=(None, 10))
-    
     iniArray = readCSV_base(fnameCSV)
     print(iniArray)
     dataCSV = iniArray
-
+    
+    treeviewA.delete(*treeviewA.get_children())    
+    treeviewA.update()  
+    
     for i in range(np.shape(dataCSV)[0]): #
         try:
             treeviewA.insert('', i, values=(i+1, dataCSV[i][0], dataCSV[i][1], dataCSV[i][2], dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
@@ -182,11 +184,39 @@ def file_save(event=None):
 
     #with open(self.active_ini_filename, "w") as ini_file:
     #    self.active_ini.write(ini_file)
-    saveCSV(dataCSV, openFileName)
+    #saveCSV(dataCSV, openFileName)
+
+    try:
+        with open(openFileName, mode='w', newline='') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            #for i in range(I):
+                #print(dataNP[i])
+                #csv_writer.writerow(dataNP[i])
+            for item in treeviewA.get_children():
+                item_text = treeviewA.item(item, "values")
+                temp = list(item_text)
+                print(temp[1:])
+                csv_writer.writerow(temp[1:])
+    except:
+        with open(openFileName, mode='w') as exit_file:
+            csv_writer = csv.writer(exit_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            #csv_writer.writerow(['&Wall', '0/startX', '1/startY', '2/endX', '3/endY', '4/arrow', '5/shape', '6/inComp'])
+            #index_temp=0
+            #for i in range(I):
+                #print(dataNP[i])
+                #csv_writer.writerow(dataNP[i])
+            for item in treeviewA.get_children():
+                item_text = treeviewA.item(item, "values")
+                temp = list(item_text)
+                print(temp[1:])
+                csv_writer.writerow(temp[1:])
+
     msg.showinfo("Saved", "File Saved Successfully")
 
     
 root = Tk() 
+root.title('csv data editor')
+#root.geometry('760x300')
 
 file_name_var = StringVar()
 file_name_label = Label(root, textvar=openFileName, fg="black", bg="white", font=(None, 13))
@@ -223,39 +253,26 @@ menubar.add_cascade(label="Delete", menu=delete_menu)
 #right_frame.pack_propagate(0)
 
 #columns = ("agent", "iniPosX", "iniPosY", "iniVx", "iniVy", "timelag", "tpre", "p", "pMode", "p2", "talkRange", "aType", "inComp", "tpreMode")
-columns = ("/", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q")
-COL = list(columns)
+COL=[]
+for i in range(16):
+	COL.append(chr(i+65))
+#print(COL)
+columns = tuple(COL)
+#columns = ("A", "B")
 
 scrollbarAy = Scrollbar(root, orient="vertical") #, orient="vertical", command=treeview.yview)
-scrollbarAy.pack(side=RIGHT, fill=Y)
+scrollbarAy.pack(side=RIGHT, expand=1, fill=Y)
 
 scrollbarAx = Scrollbar(root, orient="horizontal") #, orient="vertical", command=treeview.yview)
-scrollbarAx.pack(side=BOTTOM, fill=X)
+scrollbarAx.pack(side=BOTTOM, expand=1, fill=X)
 
 treeviewA = Treeview(root, height=18, show="headings", columns=columns)  #Table
 scrollbarAy.config(command=treeviewA.yview)
 scrollbarAx.config(command=treeviewA.xview)
 
-treeviewA.column("/", width=90, anchor='center')
-treeviewA.column("A", width=70, anchor='center')
-treeviewA.column("B", width=70, anchor='center')
-treeviewA.column("C", width=70, anchor='center')
-treeviewA.column("D", width=70, anchor='center')
-treeviewA.column("E", width=70, anchor='center')
-treeviewA.column("F", width=70, anchor='center')
-treeviewA.column("G", width=70, anchor='center')
-treeviewA.column("H", width=70, anchor='center')
-treeviewA.column("I", width=70, anchor='center')
-treeviewA.column("J", width=70, anchor='center')
-treeviewA.column("K", width=70, anchor='center')
-treeviewA.column("L", width=70, anchor='center')
-treeviewA.column("M", width=70, anchor='center')
-treeviewA.column("N", width=70, anchor='center')
-treeviewA.column("O", width=70, anchor='center')
-treeviewA.column("P", width=70, anchor='center')
-treeviewA.column("Q", width=70, anchor='center')
-
-treeviewA.pack(side=LEFT, fill=BOTH)
+for i in range(16):
+	treeviewA.column(chr(i+65), width=70, anchor='center')
+treeviewA.pack(side=TOP, fill=BOTH)
 
 def treeview_sort_column(tv, col, reverse):  # Treeview
 
@@ -275,6 +292,7 @@ def set_cell_value(event): # double click to edit the item
         #item = I001
         item_text = treeviewA.item(item, "values")
         print(item_text)
+        print(int(item_text[0]))
         print(item)
         #print(item_text[0:2])  # Output the column number selected by users
 
@@ -284,8 +302,10 @@ def set_cell_value(event): # double click to edit the item
     cn = int(str(column).replace('#',''))
     rn = int(str(row).replace('I',''), base=16)
     
-    print("cn:", column)
-    print("rn:", row)
+    print("cn:", column, cn)
+    print("rn:", row, rn)
+
+    rn = int(item_text[0])
 
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
     entryedit = Text(root, width=20, height = 2)
@@ -302,12 +322,12 @@ def set_cell_value(event): # double click to edit the item
         try:
             temp=entryedit.get(0.0, 'end').split('=')
             treeviewA.set(item, column=column, value=temp[1].strip())
-            dataCSV[rn-1][cn-2]=temp[1].strip()
-            print(dataCSV) #[rn, cn])
+            #dataCSV[rn-1][cn-2]=temp[1].strip()
+            #print(dataCSV) #[rn, cn])
         except:
             treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end').strip())
-            dataCSV[rn-1][cn-2]=entryedit.get(0.0, 'end').strip()
-            print(dataCSV) #[rn, cn])
+            #dataCSV[rn-1][cn-2]=entryedit.get(0.0, 'end').strip()
+            #print(dataCSV) #[rn, cn])
         #lb.destroy()
         entryedit.destroy()
         okb.destroy()
@@ -326,7 +346,8 @@ def newrow():
         print(item.index)
         #print(item_text[0:2])  # Output the column number selected by users
     try:
-        rn = int(str(item).replace('I',''), base=16)
+        #rn = int(str(item).replace('I',''), base=16)
+        rn = int(item_text[0])
     except:
         rn = int(np.shape(dataCSV)[0])
         
@@ -335,6 +356,7 @@ def newrow():
     except:
         treeviewA.insert('', int(rn), values=(int(rn)+1))
     #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    updateRowNum()
     treeviewA.update()
 
     #newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
@@ -351,11 +373,13 @@ def deleterow():
 
     #cn = int(str(column).replace('#',''))
     rn = int(str(item).replace('I',''), base=16)
+    print(rn)
     try:
         treeviewA.delete(item) #dataCSV[i][3], dataCSV[i][4], dataCSV[i][5],  dataCSV[i][6], dataCSV[i][7], dataCSV[i][8], dataCSV[i][9], dataCSV[i][10]))
     except:
         treeviewA.delete(item)
     #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
+    updateRowNum()
     treeviewA.update()
     
 
@@ -366,6 +390,13 @@ root.bind("<Control-s>", file_save)
 root.bind("<Control-a>", newrow)
 root.bind("<Control-d>", deleterow)
 
+
+#treeviewA.bind("<MouseWheel>", scroll_text_and_line_numbers)
+#treeviewA.bind("<Button-4>", scroll_text_and_line_numbers)
+#treeviewA.bind("<Button-5>", scroll_text_and_line_numbers)
+#line_numbers.bind("<MouseWheel>", skip_event)
+#line_numbers.bind("<Button-4>", skip_event)
+#line_numbers.bind("<Button-5>", skip_event)
 
 
 def skip_event(self, event=None):
@@ -395,9 +426,16 @@ def scroll_text_and_line_numbers(*args):
 for col in columns:  # bind function: enable sorting in table headings
     treeviewA.heading(col, text=col, command=lambda _col=col: treeview_sort_column(treeviewA, _col, False))
 
-#######################
-# Configure the menubar
+def updateRowNum():
+    i=1
+    for item in treeviewA.get_children():
+        item_text = treeviewA.item(item, "values")
+        treeviewA.set(item, column=0, value=str(i))
+        i=i+1
+    return None
 
+#######################
+# Configure the menubar      
 menubar = Menu(root, bg="lightgrey", fg="black")
 root.config(menu=menubar)
 
