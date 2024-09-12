@@ -126,7 +126,7 @@ def file_open(event=None):
     openFileName = fnameCSV
     temp=os.path.basename(fnameCSV)
     currentdir = os.path.dirname(fnameCSV)
-    #lb_csv.config(text = "The input csv file selected: "+str(fnameCSV)+"\n")
+    file_name_label.config(text = "The csv file selected: "+str(fnameCSV), fg="black", bg="lightgrey", font=(None, 10))
     #self.textInformation.insert(END, 'fname_EVAC:   '+self.fname_EVAC)
     print('fname', fnameCSV)
     #setStatusStr("Simulation not yet started!")
