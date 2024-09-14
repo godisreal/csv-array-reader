@@ -1,6 +1,5 @@
 
-import os, sys
-from data_func import *
+import os, sys, csv
 import numpy as np
 
 #from tkinter import ttk
@@ -33,6 +32,7 @@ exits=None
 doors=None
 exit2door=None
 
+'''
 RNA=0
 RNA2E=0
 RNAG=0
@@ -40,8 +40,166 @@ RNW=0
 RNE=0
 RNR=0
 RNE2D=0
+'''
 
 openFileName = None
+
+
+def readCSV_base(fileName):
+    
+    # read .csv file
+    csvFile = open(fileName, "r")
+    reader = csv.reader(csvFile)
+    print(reader)
+    strData = []
+    for item in reader:
+        #print(item)
+        strData.append(item)
+
+    #print(strData)
+    #print('np.shape(strData)=', np.shape(strData))
+    #print('\n')
+
+    print('\n')
+    print('#=======================#')
+    print(fileName)
+    dataNP = np.array(strData)
+    #print (dataNP)
+    #print ('np.shape(dataNP)', np.shape(dataNP))
+    #print ('\n')
+
+    #print(strData[1:,1:])
+    csvFile.close()
+    return dataNP
+
+
+def getData(fileName, strNote):
+    dataFeatures = readCSV_base(fileName)
+
+    Num_Data = len(dataFeatures)
+    
+    IPedStart=0
+    Find = False
+    #print(dataFeatures)
+    for i in range(Num_Data):
+        if len(dataFeatures[i]):
+            if dataFeatures[i][0]==strNote:
+                IPedStart=i
+                Find = True
+    
+    if Find is False:
+        return [], 0, 0
+        #IPedStart = None
+        #IPedEnd = None
+        #dataOK = None
+        #return dataOK, IPedStart, IPedEnd
+        #return [], 0, 0
+    else:
+        IPedEnd=IPedStart
+        for j in range(IPedStart, Num_Data):
+            if len(dataFeatures[j]):
+                if dataFeatures[j][0]=='' or dataFeatures[j][0]==' ':
+                    IPedEnd=j
+                    break
+            else: #len(dataFeatures[j])==0: Namely dataFeatures[j]==[]
+                IPedEnd=j
+                break
+            if j==Num_Data-1:
+                IPedEnd=Num_Data
+
+        dataOK = list(dataFeatures[IPedStart : IPedEnd])
+        return dataOK, IPedStart, IPedEnd
+
+    #data_result = np.array(dataOK)
+    #return data_result[1:, 1:]
+    
+
+
+def readCrowdEgressCSV(FileName, debug=True, marginTitle=1):
+
+    #dataFeatures = readCSV_base(FileName)
+    #[Num_Data, Num_Features] = np.shape(dataFeatures)   
+
+    agentFeatures, lowerIndex, upperIndex = getData(FileName, '&Ped')
+    Num_Agents=len(agentFeatures)-marginTitle
+    if Num_Agents <= 0:
+        agentFeatures, lowerIndex, upperIndex = getData(FileName, '&agent')
+        Num_Agents=len(agentFeatures)-marginTitle
+    if Num_Agents <= 0:
+        agentFeatures, lowerIndex, upperIndex = getData(FileName, '&Agent')
+        Num_Agents=len(agentFeatures)-marginTitle
+
+    if debug: 
+        print ('Number of Agents:', Num_Agents, '\n')
+        print ("Features of Agents\n", agentFeatures, "\n")
+
+    agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&agent2exit')
+    Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if Num_Agent2Exit <= 0:
+        agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&ped2exit')
+        Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if Num_Agent2Exit <= 0:
+        agent2exitFeatures, lowerIndex, upperIndex = getData(FileName, '&Ped2Exit')
+        Num_Agent2Exit=len(agent2exitFeatures)-marginTitle
+    if debug:
+        print ('Number of Agent2Exit:', Num_Agent2Exit, '\n')
+        print ('Features of Agent2Exit\n', agent2exitFeatures, "\n")
+
+    agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupC')
+    Num_AgentGroup=len(agentgroupFeatures)-marginTitle
+    if Num_AgentGroup <= 0:
+        agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupCABD')
+        Num_AgentGroup=len(agent2exitFeatures)-marginTitle
+    if Num_AgentGroup <= 0:
+        agentgroupFeatures, lowerIndex, upperIndex = getData(FileName, '&groupABD')
+        Num_AgentGroup=len(agent2exitFeatures)-marginTitle
+    if debug:
+        print ('Number of AgentGroup:', Num_AgentGroup, '\n')
+        print ('Features of AgentGroup\n', agentgroupFeatures, "\n")
+
+    obstFeatures, lowerIndex, upperIndex = getData(FileName, '&Wall')
+    Num_Obsts=len(obstFeatures)-marginTitle
+    if Num_Obsts <= 0:
+        obstFeatures, lowerIndex, upperIndex = getData(FileName, '&wall')
+        Num_Obsts=len(obstFeatures)-marginTitle
+
+    if debug:
+        print ('Number of Walls:', Num_Obsts, '\n')
+        print ("Features of Walls\n", obstFeatures, "\n")
+
+    exitFeatures, lowerIndex, upperIndex = getData(FileName, '&Exit')
+    Num_Exits=len(exitFeatures)-marginTitle
+    if Num_Exits <= 0:
+        exitFeatures, lowerIndex, upperIndex = getData(FileName, '&exit')
+        Num_Exits=len(exitFeatures)-marginTitle
+        
+    if debug: 
+        print ('Number of Exits:', Num_Exits, '\n')
+        print ("Features of Exits\n", exitFeatures, "\n")
+
+    doorFeatures, lowerIndex, upperIndex = getData(FileName, '&Door')
+    Num_Doors=len(doorFeatures)-marginTitle
+    if Num_Doors <= 0:
+        doorFeatures, lowerIndex, upperIndex = getData(FileName, '&door')
+        Num_Doors=len(doorFeatures)-marginTitle
+        
+    if debug:
+        print ('Number of Doors:', Num_Doors, '\n')
+        print ('Features of Doors\n', doorFeatures, "\n")
+        
+    exit2doorFeatures, lowerIndex, upperIndex = getData(FileName, '&Exit2Door')
+    Num_Exit2Door=len(exit2doorFeatures)-marginTitle
+    if Num_Exit2Door <= 0:
+        exit2doorFeatures, lowerIndex, upperIndex = getData(FileName, '&exit2door')
+        Num_Exit2Door=len(doorFeatures)-marginTitle
+
+    if debug:
+        print ('Number of Exit2Door:', Num_Exit2Door, '\n')
+        print ('Features of Exit2Door\n', exit2doorFeatures, "\n")
+
+
+    return agentFeatures, agent2exitFeatures, agentgroupFeatures, obstFeatures, exitFeatures, doorFeatures, exit2doorFeatures
+
 
 
 def file_new(event=None):
@@ -66,6 +224,10 @@ def file_new(event=None):
     treeviewA.update()    
     treeviewA2E.update()    
     treeviewAG.update()
+    treeviewE.update()    
+    treeviewD.update()    
+    treeviewW.update()
+    treeviewE2D.update()
     
     for i in range(len(agents[0])): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
         treeviewA.heading(columns[i], text=agents[0][i])
@@ -154,6 +316,10 @@ def file_open(event=None):
     treeviewA.update()    
     treeviewA2E.update()    
     treeviewAG.update()
+    treeviewE.update()    
+    treeviewD.update()    
+    treeviewW.update()
+    treeviewE2D.update()
 
     
     for i in range(len(agents[0])): #np.shape(arr1D_2D(agents))[1]):  # bind function: enable sorting in table headings
@@ -352,7 +518,7 @@ delete_menu.add_command(label="Delete Item", command=file_open, accelerator="Ctr
 menubar.add_cascade(label="Delete", menu=delete_menu)
 '''
 
-notebook = Notebook(root)      
+notebook = Notebook(root,  width=45, height=300)      
 notebook.pack(side=TOP, padx=2, pady=2)
 
 frameAgent = Frame(root)
@@ -656,7 +822,7 @@ def set_cell_value_A(event): # double click to edit the item
     #entryedit = Text(root,width=10+(cn-1)*16,height = 1)
     entryedit = Text(root, width=56, height = 2)
     #entryedit = Entry(root,width=10)
-    entryedit.insert(END, agents[rn][0]+'|'+agents[0][cn-1]+' = '+str(item_text[cn-1]))
+    entryedit.insert(END, str(item_text[0])+'|'+agents[0][cn-1]+' = '+str(item_text[cn-1]))
     #entryedit.place(x=16+(cn-1)*130, y=6+rn*20)
     entryedit.pack()
     #lb= Label(root, text = str(rn)+columns[cn-1])
@@ -668,19 +834,19 @@ def set_cell_value_A(event): # double click to edit the item
         try:
             temp=entryedit.get(0.0, 'end').split('=')
             treeviewA.set(item, column=column, value=temp[1].strip())
-            agents[rn][cn-1]=temp[1].strip()
-            print(agents) #[rn, cn])
+            #agents[rn][cn-1]=temp[1].strip()
+            #print(agents) #[rn, cn])
         except:
             treeviewA.set(item, column=column, value=entryedit.get(0.0, 'end').strip())
-            agents[rn][cn-1]=entryedit.get(0.0, 'end').strip()
-            print(agents) #[rn, cn])
+            #agents[rn][cn-1]=entryedit.get(0.0, 'end').strip()
+            #print(agents) #[rn, cn])
             
         #treeviewA.set(item, column=column, value=entryedit.get(0.0, "end"))
         #agents[rn-1][cn-2]=entryedit.get(0.0, "end"))
         entryedit.destroy()
         okb.destroy()
 
-    okb = Button(root, text=agents[rn][0]+'|'+agents[0][cn-1]+': <Save Changes>', width=56, command=saveedit)
+    okb = Button(root, text=str(item_text[0])+'|'+agents[0][cn-1]+': <Save Changes>', width=56, command=saveedit)
     okb.pack() #place(x=90+(cn-1)*242,y=2+rn*20)
 
 def newrow_A():
@@ -702,7 +868,7 @@ def newrow_A():
         agents.append([item_text[0], item_text[1], item_text[2],item_text[3], item_text[4], item_text[5],item_text[6], item_text[7], item_text[8], item_text[9], item_text[10]])
         #npzVE = np.concatenate((npzVE, tempVE), axis=0)
     except:
-        treeviewA.insert('', len(agents), values=('agent'+str(len(agents)-1),0,0,0,0,0,0,0,0,0,0,0))
+        treeviewA.insert('', len(agents), values=(tuple(agents[-1]))) #['agent'+str(len(agents))]+agents[-1]))
         agents.append(['agent'+str(len(agents)-1), '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'])
     #treeviewA.insert('', len(name)-1, values=(name[len(name)-1], pos[len(name)-1], vel[len(name)-1]))
     print("len(agents)")
@@ -762,13 +928,16 @@ file_menu.add_command(label="Open", command=file_open, accelerator="Ctrl+O")
 file_menu.add_command(label="Save", command=file_save, accelerator="Ctrl+S")
 menubar.add_cascade(label="File", menu=file_menu)
 
-#add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-#add_menu.add_command(label="Add Item", command=newrow_A, accelerator="Ctrl+A")
-#menubar.add_cascade(label="Add", menu=add_menu)
+add_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+add_menu.add_command(label="Add Agent", command=newrow_A, accelerator="Ctrl+A")
+add_menu.add_command(label="Add Wall", command=newrow_A)
+add_menu.add_command(label="Add Exit", command=newrow_A)
+add_menu.add_command(label="Add Door", command=newrow_A)
+menubar.add_cascade(label="Add", menu=add_menu)
 
-#delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
-#delete_menu.add_command(label="Delete Item", command=deleterow_A, accelerator="Ctrl+D")
-#menubar.add_cascade(label="Delete", menu=delete_menu)
+delete_menu = Menu(menubar, tearoff=0, bg="lightgrey", fg="black")
+delete_menu.add_command(label="Delete Agent", command=deleterow_A, accelerator="Ctrl+D")
+menubar.add_cascade(label="Delete", menu=delete_menu)
 
 newA = Button(frameAgent, text='New Agent', width=20, command=newrow_A)
 newA.pack() #place(x=120,y=20 ) #(len(name)-1)*20+45)
