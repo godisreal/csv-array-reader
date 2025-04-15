@@ -205,7 +205,7 @@ def treeview_sort_column(tv, col, reverse):  # Treeview
     tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))  # 
 '''
 
-def set_cell_value(event): # double click to edit the item
+def set_cell_value(event=None): # double click to edit the item
 
     for item in treeviewA.selection():
 
@@ -236,7 +236,7 @@ def set_cell_value(event): # double click to edit the item
     #lb= Label(root, text = str(rn)+columns[cn-1])
     #lb.pack()
 
-    def saveedit():
+    def saveedit(event=None):
         
         global dataCSV
         try:
@@ -256,7 +256,7 @@ def set_cell_value(event): # double click to edit the item
     okb.pack() #place(x=90+(cn-1)*130,y=2+rn*20)
     
 
-def addrow():
+def addrow(event=None):
 
     for item in treeviewA.selection():
         #item = I001
@@ -282,7 +282,7 @@ def addrow():
     #newb.place(x=120, y=20) #y=(len(name)-1)*20+45)
     #newb.update()
     
-def deleterow():
+def deleterow(event=None):
     
     global dataCSV
     for item in treeviewA.selection():
@@ -302,7 +302,7 @@ def deleterow():
     updateRowNum()
     treeviewA.update()
     
-def updateRowNum():
+def updateRowNum(event=None):
     i=1
     for item in treeviewA.get_children():
         item_text = treeviewA.item(item, "values")
