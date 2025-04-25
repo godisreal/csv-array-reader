@@ -228,8 +228,11 @@ class Editor(object):
         new_file_name = tkf.asksaveasfilename()
         if new_file_name:
              self.openFileName = new_file_name
+        else:
+            msg.showerror("No File Saved", "Please input an csv filename.")
+            return
         if  self.openCSV is False:
-            msg.showerror("No File Open", "Please open an csv file first")
+            msg.showerror("No File Open", "Please open an csv file first.")
             return
     
         #with open(self.active_ini_filename, "w") as ini_file:
